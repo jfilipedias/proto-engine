@@ -2,64 +2,71 @@ export class Vector2 {
 	x: number;
 	y: number;
 	
-	constructor (x: number = 0, y: number = 0){
+	public constructor (x: number = 0, y: number = 0){
 		this.x = x;
 		this.y = y;
 	}
 
-	add (otherVector: Vector2): Vector2 {
-		return  new Vector2(this.x + otherVector.x, this.y + otherVector.y);
+	public add (other: Vector2): Vector2 {
+		return  new Vector2(this.x + other.x, this.y + other.y);
 	}
 
-	addScalar (scalar: number): Vector2 {
+	public addScalar (scalar: number): Vector2 {
 		return  new Vector2(this.x + scalar, this.y + scalar);
 	}
 
-	subtract (otherVector: Vector2): Vector2 {
-		return  new Vector2(this.x - otherVector.x, this.y - otherVector.y);
+	public subtract (other: Vector2): Vector2 {
+		return  new Vector2(this.x - other.x, this.y - other.y);
 	}
 
-	subtractScalar (scalar: number): Vector2 {
+	public subtractScalar (scalar: number): Vector2 {
 		return  new Vector2(this.x - scalar, this.y - scalar);
 	}
 
-	multiply (otherVector: Vector2): Vector2 {
-		return  new Vector2(this.x * otherVector.x, this.y * otherVector.y);
+	public multiply (other: Vector2): Vector2 {
+		return  new Vector2(this.x * other.x, this.y * other.y);
 	}
 
-	multiplyScalar (scalar: number): Vector2 {
+	public multiplyScalar (scalar: number): Vector2 {
 		return  new Vector2(this.x * scalar, this.y * scalar);
 	}
 
-	divide (otherVector: Vector2): Vector2 {
-		return  new Vector2(this.x / otherVector.x, this.y / otherVector.y);
+	public divide (other: Vector2): Vector2 {
+		return  new Vector2(this.x / other.x, this.y / other.y);
 	}
 
-	divideScalar (scalar: number): Vector2 {
+	public divideScalar (scalar: number): Vector2 {
 		return  new Vector2(this.x / scalar, this.y / scalar);
 	}
 
-	dot (otherVector: Vector2): number {		
-		return this.x * otherVector.x + this.y * otherVector.y;
+	public dot (other: Vector2): number {		
+		return this.x * other.x + this.y * other.y;
 	}
 
-	cross (otherVector: Vector2): number {		
-		return this.x * otherVector.y - this.y * otherVector.x;
+	public cross (other: Vector2): number {		
+		return this.x * other.y - this.y * other.x;
 	}
 
-	length (): number {
+	public projectOnVector (other: Vector2): Vector2 {
+		var scalarA = this.dot(other);
+		var scalarB = other.dot(other);
+		
+		return other.multiplyScalar(scalarA / scalarB);
+	}
+
+	public length (): number {
 		return Math.sqrt(this.lengthSqrt());
 	}
 
-	lengthSqrt (): number {
+	public lengthSqrt (): number {
 		return this.x * this.x + this.y * this.y;
 	}
 
-	normalize (): Vector2 {
+	public normalize (): Vector2 {
 		return this.divideScalar(this.length());
 	}
 
-	toString (): string {
+	public toString (): string {
 		return "(" + this.x + ", " + this.y + ")";
 	}
 }

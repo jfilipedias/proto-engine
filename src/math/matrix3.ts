@@ -43,12 +43,21 @@ export class Matrix3 {
         ]
     }
 
-    /* public transform (other: Vector2): Vector2 {
+    public transform (other: Vector2): Vector2 {
+        const te = this.elements;
+
         var vector = new Vector2(
-            this.elements[0] * other.x + this.elements[3] * other.y + this.elements [6],
-            this.elements[1] * other.y + this.elements[4] * other.y + 
+            te[0] * other.x + te[3] * other.y + te[6],
+            te[1] * other.y + te[4] * other.y + te[7]
         );
 
-        return other;
-    } */
+        var vectorW = te[2] * other.x + te[5] * other.y + te[8];
+
+        if (vectorW != 0) {
+            vector.x /= vectorW;
+            vector.y /= vectorW;
+        }
+
+        return vector;
+    }
 }

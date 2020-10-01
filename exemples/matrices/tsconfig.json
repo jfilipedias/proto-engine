@@ -1,9 +1,0 @@
-{
-    "compilerOptions": {
-        "target": "es5",    
-        "module": "system",
-        "outFile": "./build/tsc.js",
-        "sourceMap": true
-    },
-    "include": ["./index.ts"],
-}

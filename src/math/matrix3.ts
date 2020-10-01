@@ -44,7 +44,7 @@ export class Matrix3 {
     }
     
     // TODO
-    public trs () {}
+    public trs (translate: Vector2, rotare: number, scale: number) {}
 
 
     public translate (x: number, y: number) {

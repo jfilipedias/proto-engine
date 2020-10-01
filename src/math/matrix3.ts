@@ -74,7 +74,6 @@ export class Matrix3 {
         ]
     }
 
-    // TODO
     public multiply (other: Matrix3): Matrix3 {
         var te = this.elements;
         var oe = other.elements;

@@ -4,6 +4,7 @@
   "description": "An prototype engine using p5 library to study math and physics for games",
   "main": "index.js",
   "scripts": {
+    "build": "webpack",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

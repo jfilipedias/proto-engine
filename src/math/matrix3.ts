@@ -1,6 +1,6 @@
-import { Vector2 } from "./vector2";
+import Vector2 from "./vector2";
 
-export class Matrix3 {
+export default class Matrix3 {
     elements: number[] = [];
 
     public constructor () {

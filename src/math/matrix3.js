@@ -12,15 +12,6 @@ class Matrix3 {
             0, 0, 1,        // 3rd collum
         ];
     }
-
-    // TODO
-    inverse() { }
-    
-    // TODO
-    derterminant() { }
-    
-    // TODO
-    transpose() { }
     
     transform(other) {
         var te = this.elements;
@@ -39,7 +30,11 @@ class Matrix3 {
     }
     
     // TODO
-    trs(translate, rotate, scale) { }
+    trs(translate, rotate, scale) {
+        this.elements = [
+            
+        ]
+    }
     
     translate(x, y) {
         this.elements = [

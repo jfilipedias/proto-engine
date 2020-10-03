@@ -6,15 +6,19 @@ function setup () {
 	createCanvas(600, 600);
 
 	origin = new Vector2(width/2, height/2);
-	
-	square = new Square(100, 120, 100);
+	square = new Square(0, 0, 100);
+	square.pivot = square.pivot.add(origin);
+
+	scaleSquare(square.points, 1.2, 0.5);
+	translateSquare(square, 150, 150);
 }
 
 function draw () {
 	background(255);
 	drawGrid();
+
+	rotateSquare(PI * 0.01, square.points, square.pivot);
 	drawSquare(square.points);
-	rotateSquare(square.points, PI * 0.01);
 }
 
 function drawGrid () {
@@ -45,10 +49,44 @@ function drawSquare (points) {
 	line(origin.x + points[3].x, origin.y - points[3].y, origin.x + points[0].x, origin.y - points[0].y);
 }
 
-function rotateSquare (points, tetha) {
-	var rotation = new Matrix3();
-	rotation.rotate(tetha);
-
+function scaleSquare (points, x, y) {
+	var matrix = new Matrix3();
+	matrix.scale(x,y);
+	
 	for (var i = 0; i < points.length; i++)
-		points[i] = rotation.transform(points[i]);
+		points[i] = matrix.transform(points[i]);
+}
+
+function rotateSquare (tetha, points, pivot = origin) {
+	var originOffset = pivot.subtract(origin);
+
+	var matrixRotation = new Matrix3();
+	matrixRotation.rotate(tetha);
+
+	for (var i = 0; i < points.length; i++) {	
+		var matrixTraslation = new Matrix3();
+
+		// Move to origin
+		matrixTraslation.translate(-originOffset.x, -originOffset.y);
+		points[i] = matrixTraslation.transform(points[i]);
+		
+		// Apply Rotation
+		points[i] = matrixRotation.transform(points[i]);
+
+		// Bring Back to Pivot
+		matrixTraslation.translate(originOffset.x, originOffset.y);
+		points[i] = matrixTraslation.transform(points[i]);
+	}
+}
+
+function translateSquare (square, x, y) {
+	var matrix = new Matrix3();
+	matrix.translate(x,y);
+
+	// Pivot transform
+	square.pivot = square.pivot.add(new Vector2(x, y));
+
+	// Points transform
+	for (var i = 0; i < square.points.length; i++)
+		square.points[i] = matrix.transform(square.points[i]);
 }

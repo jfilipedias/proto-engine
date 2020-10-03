@@ -2,6 +2,9 @@ class Square {
     constructor (x, y, size) {
         this.x = x;
         this.y = y;
+        
+        this.pivot = new Vector2(this.x, this.y);
+
         this.size = size;
 
         this.points = [];

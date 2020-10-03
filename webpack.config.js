@@ -1,21 +1,7 @@
-const path = require('path');
-
 module.exports = {
-  entry: './src/index.ts',
-  module: {
-    rules: [
-      {
-        test: /\.ts$/,
-        use: 'ts-loader',
-        include: [path.resolve(__dirname, 'src')]
-      }
-    ]
-  },
-  resolve: {
-    extensions: ['.ts', '.js'],
-  },
+  entry: "./src/index.js",
   output: {
-    filename: 'proto-engine.js',
-    path: path.resolve(__dirname, 'dist')
-  }
-}
+    path: __dirname,
+    filename: "dist/proto-engine.js",
+  },
+};

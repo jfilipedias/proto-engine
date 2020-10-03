@@ -7,9 +7,9 @@ class Matrix3 {
     // Collum-Major notation
     identity() {
         this.elements = [
-            1, 0, 0,
-            0, 1, 0,
-            0, 0, 1,
+            1, 0, 0,        // 1st collum
+            0, 1, 0,        // 2nd collum
+            0, 0, 1,        // 3rd collum
         ];
     }
 
@@ -24,12 +24,17 @@ class Matrix3 {
     
     transform(other) {
         var te = this.elements;
-        var vector = new Vector2(te[0] * other.x + te[3] * other.y + te[6], te[1] * other.y + te[4] * other.y + te[7]);
+        var vector = new Vector2(
+            te[0] * other.x + te[3] * other.y + te[6], 
+            te[1] * other.x + te[4] * other.y + te[7]);
+        
         var vectorW = te[2] * other.x + te[5] * other.y + te[8];
+        
         if (vectorW != 0) {
             vector.x /= vectorW;
             vector.y /= vectorW;
         }
+        
         return vector;
     }
     
@@ -38,9 +43,9 @@ class Matrix3 {
     
     translate(x, y) {
         this.elements = [
-            1, 0, 0,
-            0, 1, 0,
-            x, y, 1,
+            1, 0, x,
+            0, 1, y,
+            0, 0, 1,
         ];
     }
     
@@ -55,10 +60,11 @@ class Matrix3 {
     rotate(theta) {
         var cos = Math.cos(theta);
         var sin = Math.sin(theta);
+        
         this.elements = [
-            cos, sin, 0,
+             cos, sin, 0,
             -sin, cos, 0,
-            0, 0, 1,
+               0,   0, 1,
         ];
     }
     

@@ -1,9 +1,9 @@
-import Vector2 from "./vector2";
-export default class Matrix3 {
+class Matrix3 {
     constructor() {
         this.elements = [];
         this.identity();
     }
+
     // Collum-Major notation
     identity() {
         this.elements = [
@@ -12,12 +12,16 @@ export default class Matrix3 {
             0, 0, 1,
         ];
     }
+
     // TODO
     inverse() { }
+    
     // TODO
     derterminant() { }
+    
     // TODO
     transpose() { }
+    
     transform(other) {
         var te = this.elements;
         var vector = new Vector2(te[0] * other.x + te[3] * other.y + te[6], te[1] * other.y + te[4] * other.y + te[7]);
@@ -28,8 +32,10 @@ export default class Matrix3 {
         }
         return vector;
     }
+    
     // TODO
     trs(translate, rotare, scale) { }
+    
     translate(x, y) {
         this.elements = [
             1, 0, 0,
@@ -37,6 +43,7 @@ export default class Matrix3 {
             x, y, 1,
         ];
     }
+    
     scale(x, y) {
         this.elements = [
             x, 0, 0,
@@ -44,6 +51,7 @@ export default class Matrix3 {
             0, 0, 1,
         ];
     }
+    
     rotate(theta) {
         var cos = Math.cos(theta);
         var sin = Math.sin(theta);
@@ -53,6 +61,7 @@ export default class Matrix3 {
             0, 0, 1,
         ];
     }
+    
     multiply(other) {
         var te = this.elements;
         var oe = other.elements;

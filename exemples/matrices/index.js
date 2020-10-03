@@ -1,4 +1,4 @@
-var squareVectors = [];
+var square;
 
 var origin;
 
@@ -7,14 +7,14 @@ function setup () {
 
 	origin = new Vector2(width/2, height/2);
 	
-	squareVectors = createSquare (100, 120, 100);
+	square = new Square(100, 120, 100);
 }
 
 function draw () {
 	background(255);
 	drawGrid();
-	drawSquare(squareVectors);
-	rotateSquare(squareVectors, PI * 0.02);
+	drawSquare(square.points);
+	rotateSquare(square.points, PI * 0.01);
 }
 
 function drawGrid () {
@@ -37,33 +37,18 @@ function drawGrid () {
 	text("X", width - 10, origin.y + 20);
 }
 
-function createSquare (positionX, positionY, size) {
-	var vectors = [];
-	
-	// Right Top Corner
-	vectors.push(new Vector2(origin.x + positionX + size/2, origin.y - positionY - size/2));
-	// Left Top Corner
-	vectors.push(new Vector2(origin.x + positionX - size/2, origin.y - positionY - size/2));
-	// Left Bottom Corner
-	vectors.push(new Vector2(origin.x + positionX - size/2, origin.y - positionY + size/2));
-	// Right Bottom Corner
-	vectors.push(new Vector2(origin.x + positionX + size/2, origin.y - positionY + size/2));
-
-	return vectors;
-}
-
-function drawSquare (vectors) {
+function drawSquare (points) {
 	stroke(35, 110, 230);
-	line(vectors[0].x, vectors[0].y, vectors[1].x, vectors[1].y);
-	line(vectors[1].x, vectors[1].y, vectors[2].x, vectors[2].y);
-	line(vectors[2].x, vectors[2].y, vectors[3].x, vectors[3].y);
-	line(vectors[3].x, vectors[3].y, vectors[0].x, vectors[0].y);
+	line(origin.x + points[0].x, origin.y - points[0].y, origin.x + points[1].x, origin.y - points[1].y);
+	line(origin.x + points[1].x, origin.y - points[1].y, origin.x + points[2].x, origin.y - points[2].y);
+	line(origin.x + points[2].x, origin.y - points[2].y, origin.x + points[3].x, origin.y - points[3].y);
+	line(origin.x + points[3].x, origin.y - points[3].y, origin.x + points[0].x, origin.y - points[0].y);
 }
 
-function rotateSquare (vectors, tetha) {
+function rotateSquare (points, tetha) {
 	var rotation = new Matrix3();
 	rotation.rotate(tetha);
 
-	for (var i = 0; i < vectors.length; i++)
-		vectors[i] = rotation.transform(vectors[i]);
+	for (var i = 0; i < points.length; i++)
+		points[i] = rotation.transform(points[i]);
 }

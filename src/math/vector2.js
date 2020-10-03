@@ -57,6 +57,12 @@ class Vector2 {
     lengthSqrt() {
         return this.x * this.x + this.y * this.y;
     }
+
+    distanceTo(other) {
+        var distance = this.subtract(other);
+        
+        return Math.sqrt(distance.lengthSqrt());
+    }
    
     normalize() {
         return this.divideScalar(this.length());

@@ -30,9 +30,20 @@ class Matrix3 {
     }
     
     // TODO
-    trs(translate, rotate, scale) {
+    trs(translate, tetha, scale) {
+        var tx = translate.x;
+        var ty = translate.y;
+
+        var cos = Math.cos(tetha);
+        var sin = Math.sin(tetha);
+
+        var sx = scale.x;
+        var sy = scale.y;
+
         this.elements = [
-            
+            sx *  cos, sx * sin, 0,
+            sy * -sin, sy * cos, 0,
+                   tx,       ty, 1,
         ]
     }
     

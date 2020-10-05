@@ -72,6 +72,23 @@ class Matrix3 {
                    tx,       ty, 1,
         ]
     }
+
+    trsInverse(translate, tetha, scale) {
+        var tx = translate.x;
+        var ty = translate.y;
+        
+        var cos = Math.cos(tetha);
+        var sin = Math.sin(tetha);
+
+        var sx = scale.x;
+        var sy = scale.y;
+
+        this.elements = [
+                              cos / sx,                   -sin / sy, 0,
+                              sin / sx,                    cos / sy, 0,
+            (-tx * cos -ty * sin) / sx, (-tx * -sin -ty * cos) / sy, 1,
+        ]
+    }
     
     multiply(other) {
         var te = this.elements;

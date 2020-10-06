@@ -12,12 +12,38 @@ class Vector2 {
         return new Vector2(this.x + scalar, this.y + scalar);
     }
    
-    subtract(other) {
-        return new Vector2(this.x - other.x, this.y - other.y);
+    cross(other) {
+        return this.x * other.y - this.y * other.x;
+    }
+
+    distanceTo(other) {
+        var distance = this.subtract(other);
+        
+        return Math.sqrt(distance.lengthSqrt());
+    }
+
+    divide(other) {
+        return new Vector2(this.x / other.x, this.y / other.y);
     }
    
-    subtractScalar(scalar) {
-        return new Vector2(this.x - scalar, this.y - scalar);
+    divideScalar(scalar) {
+        return new Vector2(this.x / scalar, this.y / scalar);
+    }
+
+    dot(other) {
+        return this.x * other.x + this.y * other.y;
+    }
+   
+    length() {
+        return Math.sqrt(this.lengthSqrt());
+    }
+   
+    lengthSqrt() {
+        return this.x * this.x + this.y * this.y;
+    }
+   
+    normalize() {
+        return this.divideScalar(this.length());
     }
    
     multiply(other) {
@@ -28,44 +54,18 @@ class Vector2 {
         return new Vector2(this.x * scalar, this.y * scalar);
     }
    
-    divide(other) {
-        return new Vector2(this.x / other.x, this.y / other.y);
-    }
-   
-    divideScalar(scalar) {
-        return new Vector2(this.x / scalar, this.y / scalar);
-    }
-   
-    dot(other) {
-        return this.x * other.x + this.y * other.y;
-    }
-   
-    cross(other) {
-        return this.x * other.y - this.y * other.x;
-    }
-   
     projectOnVector(other) {
         var scalarA = this.dot(other);
         var scalarB = other.dot(other);
         return other.multiplyScalar(scalarA / scalarB);
     }
    
-    length() {
-        return Math.sqrt(this.lengthSqrt());
+    subtract(other) {
+        return new Vector2(this.x - other.x, this.y - other.y);
     }
    
-    lengthSqrt() {
-        return this.x * this.x + this.y * this.y;
-    }
-
-    distanceTo(other) {
-        var distance = this.subtract(other);
-        
-        return Math.sqrt(distance.lengthSqrt());
-    }
-   
-    normalize() {
-        return this.divideScalar(this.length());
+    subtractScalar(scalar) {
+        return new Vector2(this.x - scalar, this.y - scalar);
     }
    
     toString() {

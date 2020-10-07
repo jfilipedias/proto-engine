@@ -14,22 +14,43 @@ function draw () {
 	background(255);
     drawGrid();
 
-    if (points.length === 1)
-        drawPreview(points[0]);
-    
-    if (points.length > 1 )
-        drawLine(lineA.start, lineA.end);
-    
-    if (points.length === 3)
-        drawPreview(points[2]);
+	// Line Preview
+    if (points.length === 1 || points.length === 3)
+        drawPreview(points[points.length - 1]);
+	
+	// Line AB
+    if (points.length > 1 ) {
+		drawLine(lineA.start, lineA.end);
+		noStroke();
+		text('A', lineA.start.x - 20, lineA.start.y - 20);
+		text('B', lineA.end.x   + 20, lineA.end.y   - 20);
+	}
 
-    if (points.length > 3)
-        drawLine(lineB.start, lineB.end);
+	// Line CD
+    if (points.length > 3) {
+		drawLine(lineB.start, lineB.end);
+		noStroke();
+		text('C', lineB.start.x - 20, lineB.start.y - 20);
+		text('D', lineB.end.x   + 20, lineB.end.y   - 20);
+	}	
+
+	if ( points.length < 4 ) return;
+
+	var intersectionPoint = lineA.intersectLine(lineB);
+
+	if (intersectionPoint === null) return;
+	
+	text('Intersect', 20, 20);
+	fill(30, 30, 30);
+	//circle(intersectionPoint.x, intersectionPoint.y, 10);
+	//console.log(intersectionPoint);
 }
 
 function drawGrid () {
-	// Grid Y axis
 	stroke(30, 30, 30);
+	strokeWeight(1);
+	
+	// Grid Y axis
 	line(origin.x, 0, origin.x, height);
 	line(origin.x, 0, origin.x - 5, 7);
 	line(origin.x, 0, origin.x + 5, 7);
@@ -38,7 +59,6 @@ function drawGrid () {
 	text("Y", origin.x - 20, 10);
 
 	// Grid X axis
-	stroke(30, 30, 30);
 	line(0, origin.y, width, origin.y);  
 	line(width - 7, origin.y - 5, width, origin.y);
 	line(width - 7, origin.y + 5, width, origin.y);
@@ -49,11 +69,13 @@ function drawGrid () {
 
 function drawLine (start, end) {
 	stroke(35, 110, 230);
+	strokeWeight(2);
     line(start.x, start.y, end.x, end.y);
 }
 
 function drawPreview (start) {
-	stroke(30, 30, 30);
+	stroke(180, 180, 180);
+	strokeWeight(1);
     line(start.x, start.y, mouseX, mouseY);
 }
 

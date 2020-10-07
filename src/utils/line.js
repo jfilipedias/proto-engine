@@ -12,13 +12,17 @@ class Line {
         var cb = this.end.subtract(other.start);
         var cd = other.end.subtract(other.start);
 
-        if (ab.cross(ac) * ab.cross(ad) >= 0 || cd.cross(ca) * cd.cross(cb) >= 0)
+        var intersectionCDAB = Math.sign(ab.cross(ac)) ^ Math.sign(ab.cross(ad));
+        var intersectionABCD = Math.sign(cd.cross(ca)) ^ Math.sign(cd.cross(cb));
+        var intersect = intersectionCDAB && intersectionABCD
+
+        /* console.log(Math.sign(ab.cross(ac)) + " ^ " + Math.sign(ab.cross(ad)) + " = " + intersectionCDAB + "   " +
+                    Math.sign(cd.cross(ca)) + " ^ " + Math.sign(cd.cross(cb)) + " = " + intersectionABCD); */
+ 
+        if (!intersect)
             return null;
 
-        var otherNormal = new Vector2(-cd.y, cd.x);
-
-        var ba = this.end.subtract(this.start);
-        var t = ac.dot(otherNormal) / ab.dot(otherNormal);
+        var t = ac.dot(cd.normal()) / ab.dot(cd.normal());
 
         return this.start.lerp(this.end, t);
     }

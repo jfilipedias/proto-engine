@@ -1,7 +1,7 @@
 class Vector2 {
-    constructor(x = 0, y = 0) {
-        this.x = x;
-        this.y = y;
+    constructor(x = 0.0, y = 0.0) {
+        this.x = x * 1.0;
+        this.y = y * 1.0;
     }
    
     add(other) {
@@ -47,6 +47,10 @@ class Vector2 {
         return this.x * this.x + this.y * this.y;
     }
    
+    normal() {
+        return new Vector2(-this.y, this.x);
+    }
+
     normalize() {
         return this.divideScalar(this.length());
     }

@@ -33,6 +33,11 @@ class Vector2 {
     dot(other) {
         return this.x * other.x + this.y * other.y;
     }
+
+    lerp(other, t) {
+        var ab = other.subtract(this)
+        return this.add(ab.multiplyScalar(t));
+    }
    
     length() {
         return Math.sqrt(this.lengthSqrt());

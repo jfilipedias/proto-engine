@@ -42,8 +42,7 @@ function draw () {
 	
 	text('Intersect', 20, 20);
 	fill(30, 30, 30);
-	//circle(intersectionPoint.x, intersectionPoint.y, 10);
-	//console.log(intersectionPoint);
+	circle(intersectionPoint.x, intersectionPoint.y, 10);
 }
 
 function drawGrid () {

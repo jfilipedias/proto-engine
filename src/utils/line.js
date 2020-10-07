@@ -5,22 +5,21 @@ class Line {
     }
 
     intersectLine (other) {        
-        var ab = this.start.subtract(this.end);
-        var ac = this.start.subtract(other.start);
-        var ad = this.start.subtract(other.end);
-        var ca = other.start.subtract(this.start);
-        var cb = other.start.subtract(this.end);
-        var cd = other.start.subtract(other.end);
+        var ab = this.end.subtract(this.start);
+        var ac = other.start.subtract(this.start);
+        var ad = other.end.subtract(this.start);
+        var ca = this.start.subtract(other.start);
+        var cb = this.end.subtract(other.start);
+        var cd = other.end.subtract(other.start);
 
         if (ab.cross(ac) * ab.cross(ad) >= 0 || cd.cross(ca) * cd.cross(cb) >= 0)
             return null;
 
-        var otherNormal = new Vector2(-other.start.y, other.start.x);
+        var otherNormal = new Vector2(-cd.y, cd.x);
 
         var ba = this.end.subtract(this.start);
-        
-        console.log(ca.dot(otherNormal) + ba.dot(otherNormal));
-        
-        return ca.dot(otherNormal) / ba.dot(otherNormal);
+        var t = ac.dot(otherNormal) / ab.dot(otherNormal);
+
+        return this.start.lerp(this.end, t);
     }
 }

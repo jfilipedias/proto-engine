@@ -8,6 +8,15 @@ var points = [];
 function setup () {
 	createCanvas(600, 600);
 	origin = new Vector2(width * 0.5, height * 0.5);
+
+	// Teste caso patologico
+	/* points.push(new Vector2(100, 400));
+	points.push(new Vector2(500, 400));
+	points.push(new Vector2(50, 400));
+	points.push(new Vector2(200, 400));
+
+	lineA = new Line(points[0], points[1]);
+	lineB = new Line(points[2], points[3]); */
 }
 
 function draw () {
@@ -44,7 +53,9 @@ function draw () {
 	
 	text('Intersect', 20, 20);
 	fill(30, 30, 30);
-	circle(intersectionPoint.x, intersectionPoint.y, 5);
+
+	if (typeof intersectionPoint === 'object')
+		circle(intersectionPoint.x, intersectionPoint.y, 5);
 }
 
 function drawGrid () {

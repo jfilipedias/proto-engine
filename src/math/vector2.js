@@ -1,7 +1,7 @@
 class Vector2 {
-    constructor(x = 0.0, y = 0.0) {
-        this.x = x * 1.0;
-        this.y = y * 1.0;
+    constructor(x = 0, y = 0) {
+        this.x = x;
+        this.y = y;
     }
    
     add(other) {
@@ -13,7 +13,7 @@ class Vector2 {
     }
    
     cross(other) {
-        return (this.x * other.y) - (this.y * other.x);
+        return this.x * other.y - this.y * other.x;
     }
 
     distanceTo(other) {
@@ -31,7 +31,7 @@ class Vector2 {
     }
 
     dot(other) {
-        return (this.x * other.x) + (this.y * other.y);
+        return this.x * other.x + this.y * other.y;
     }
 
     lerp(other, t) {

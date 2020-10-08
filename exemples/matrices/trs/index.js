@@ -22,11 +22,11 @@ function setup () {
     
         
     // Apply Inverse TRS
-    var trsInverse = new Matrix3();
+    /* var trsInverse = new Matrix3();
     trsInverse.trsInverse(translate, theta, scale);
 
     for (var i = 0; i < square.points.length; i++)
-        square.points[i] = trsInverse.transform(square.points[i]);
+        square.points[i] = trsInverse.transform(square.points[i]); */
 }
 
 function draw () {

@@ -1,12 +1,21 @@
 var origin;
 var cloudPoints;
+var obb;
 
 function setup () {
     createCanvas(600, 600);
     
     origin = new Vector2(width * 0.5, height * 0.5);
     
-    cloudPoints = createCloud(-35, 100, 50, 90, 50);
+    cloudPoints = createCloud(-35, 100, 50, 90, 100);
+
+    console.log('Creating OBB...');
+
+    obb = new OBB(cloudPoints);
+    
+    console.log(obb.center.toString());
+
+    console.log('OBB created...');
 }
 
 function draw () {
@@ -17,50 +26,31 @@ function draw () {
     stroke(35, 110, 230);
     line(origin.x, origin.y, mouseX, mouseY);
 
-    var vHate = v.normalize();
-
     var n = new Vector2(-v.y, v.x);
     stroke(242, 55, 41);
     line(origin.x, origin.y, origin.x + n.x, origin.y - n.y);
-    
-    var nHate = n.normalize();
-
     drawCloud(cloudPoints);
 
-    var projectionV = projectCloud(cloudPoints, vHate);
-    var projectionN = projectCloud(cloudPoints, nHate);
+    stroke(232, 23, 110);
+    drawOBB(obb);
 
-    var lengthV = projectionV.max - projectionV.min;
-    var medianV = (projectionV.min + projectionV.max) * 0.5;
-    var centerV = vHate.multiplyScalar(medianV);
-
-    var lengthN = projectionN.max - projectionN.min;
-    var medianN = (projectionN.min + projectionN.max) * 0.5;
-    var centerN = nHate.multiplyScalar(medianN);
-    
-    var centerX = (centerV.x + centerN.x);
-    var centerY = (centerV.y + centerN.y);
-    var center = new Vector2(centerX, centerY);
-    
     stroke(255, 204, 0);
-    circle(origin.x + centerX, origin.y - centerY, 5);
-   
-    var pointA = center.add((vHate.multiplyScalar(lengthV/2)).subtract(nHate.multiplyScalar(lengthN/2)));
-    circle(origin.x + pointA.x, origin.y - pointA.y, 5);
-    
-    var pointB = center.subtract((vHate.multiplyScalar(lengthV/2)).add(nHate.multiplyScalar(lengthN/2)));
-    circle(origin.x + pointB.x, origin.y - pointB.y, 5);
+    drawCustomOBB(v.normalize(), n.normalize());
+}
 
-    var pointC = center.subtract((vHate.multiplyScalar(lengthV/2)).subtract(nHate.multiplyScalar(lengthN/2)));
-    circle(origin.x + pointC.x, origin.y - pointC.y, 5);
-    
-    var pointD = center.add((vHate.multiplyScalar(lengthV/2)).add(nHate.multiplyScalar(lengthN/2)));
-    circle(origin.x + pointD.x, origin.y - pointD.y, 5);
-    
-    line(origin.x + pointA.x , origin.y - pointA.y, origin.x + pointB.x, origin.y - pointB.y);
-    line(origin.x + pointB.x , origin.y - pointB.y, origin.x + pointC.x, origin.y - pointC.y);
-    line(origin.x + pointC.x , origin.y - pointC.y, origin.x + pointD.x, origin.y - pointD.y);
-    line(origin.x + pointD.x , origin.y - pointD.y, origin.x + pointA.x, origin.y - pointA.y);
+function createCloud (x, y, width, height, n) {
+    var points = [];
+
+    for (var i = 0; i < n; i++)
+        points.push(new Vector2( (x + Math.random() * width - i ), (y + Math.random() * height + i) ));
+
+    return points;
+}
+
+function drawCloud (points) {
+    stroke(30);
+    for (var i = 0; i < points.length; i++)
+        circle(origin.x + points[i].x, origin.y - points[i].y, 2);
 }
 
 function drawGrid () {
@@ -83,43 +73,54 @@ function drawGrid () {
 	text("X", width - 10, origin.y + 20);
 }
 
-function createCloud (x, y, width, height, n) {
-    var points = [];
+function drawOBB (obb) {
+    var vector = new Vector2(1, 0);
+    vector = obb.matrix.transform(vector);
+    normal = new Vector2(-vector.y, vector.x);
 
-    for (i = 0; i < n; i++)
-        points.push(new Vector2( (x + Math.random() * width - i ), (y + Math.random() * height + i) ));
+    var projectionV = projectCloud(cloudPoints, vector);
+    var projectionN = projectCloud(cloudPoints, normal);
 
-    return points;
+    var lengthV = projectionV.max - projectionV.min;
+    var lengthN = projectionN.max - projectionN.min;
+    
+    var pointA = obb.center.add((vector.multiplyScalar(lengthV/2)).subtract(normal.multiplyScalar(lengthN/2)));
+    var pointB = obb.center.subtract((vector.multiplyScalar(lengthV/2)).add(normal.multiplyScalar(lengthN/2)));
+    var pointC = obb.center.subtract((vector.multiplyScalar(lengthV/2)).subtract(normal.multiplyScalar(lengthN/2)));
+    var pointD = obb.center.add((vector.multiplyScalar(lengthV/2)).add(normal.multiplyScalar(lengthN/2)));
+    
+    line(origin.x + pointA.x , origin.y - pointA.y, origin.x + pointB.x, origin.y - pointB.y);
+    line(origin.x + pointB.x , origin.y - pointB.y, origin.x + pointC.x, origin.y - pointC.y);
+    line(origin.x + pointC.x , origin.y - pointC.y, origin.x + pointD.x, origin.y - pointD.y);
+    line(origin.x + pointD.x , origin.y - pointD.y, origin.x + pointA.x, origin.y - pointA.y);
 }
 
-function drawCloud (points) {
-    stroke(30);
-    for (i = 0; i < points.length; i++)
-        circle(origin.x + points[i].x, origin.y - points[i].y, 2);
-}
+function drawCustomOBB (vector, normal) {
+    var projectionV = projectCloud(cloudPoints, vector);
+    var projectionN = projectCloud(cloudPoints, normal);
 
-function projectCloud (points, vector) {
-    var max = -Infinity;
-    var min =  Infinity;
+    var lengthV = projectionV.max - projectionV.min;
+    var lengthN = projectionN.max - projectionN.min;
 
-    for (i = 0; i < points.length; i++) {
-        var dot = points[i].dot(vector);
-        var projection = vector.multiplyScalar(dot);
+    var medianV = (projectionV.min + projectionV.max) * 0.5;
+    var medianN = (projectionN.min + projectionN.max) * 0.5;
 
-        min = Math.min(min, dot);
-        max = Math.max(max, dot);
-
-        //stroke(131, 78, 204);
-        //circle(origin.x + projection.x, origin.y - projection.y, 2);
-    }
-
-    //var medianDot = (min + max) * 0.5;
-    //var medianVector = vector.multiplyScalar(medianDot);
-
-    //stroke(90, 204, 78);
-    //circle(origin.x + medianVector.x, origin.y - medianVector.y, 5);
-
-    return { max, min };
+    var centerN = normal.multiplyScalar(medianN);
+    var centerV = vector.multiplyScalar(medianV);
+    
+    var centerX = (centerV.x + centerN.x);
+    var centerY = (centerV.y + centerN.y);
+    var center = new Vector2(centerX, centerY);    
+   
+    var pointA = center.add((vector.multiplyScalar(lengthV/2)).subtract(normal.multiplyScalar(lengthN/2)));
+    var pointB = center.subtract((vector.multiplyScalar(lengthV/2)).add(normal.multiplyScalar(lengthN/2)));
+    var pointC = center.subtract((vector.multiplyScalar(lengthV/2)).subtract(normal.multiplyScalar(lengthN/2)));
+    var pointD = center.add((vector.multiplyScalar(lengthV/2)).add(normal.multiplyScalar(lengthN/2)));
+    
+    line(origin.x + pointA.x , origin.y - pointA.y, origin.x + pointB.x, origin.y - pointB.y);
+    line(origin.x + pointB.x , origin.y - pointB.y, origin.x + pointC.x, origin.y - pointC.y);
+    line(origin.x + pointC.x , origin.y - pointC.y, origin.x + pointD.x, origin.y - pointD.y);
+    line(origin.x + pointD.x , origin.y - pointD.y, origin.x + pointA.x, origin.y - pointA.y);
 }
 
 function getMousePosition () {
@@ -127,4 +128,17 @@ function getMousePosition () {
     var y = -mouseY + origin.y;
 
     return new Vector2(x, y);
+}
+
+function projectCloud (points, vector) {
+    var max = -Infinity;
+    var min =  Infinity;
+
+    for (var i = 0; i < points.length; i++) {
+        var dot = points[i].dot(vector);
+
+        min = Math.min(min, dot);
+        max = Math.max(max, dot);
+    }
+    return { max, min };
 }

@@ -112,4 +112,8 @@ class Matrix3 {
             -(tx * cos + ty * sin) / sx, -(tx * -sin + ty * cos) / sy, 1,
         ]
     }
+
+    toString() {
+        return `|${this.elements[0].toFixed(2)} ${this.elements[3].toFixed(2)} ${this.elements[6].toFixed(2)}|\n|${this.elements[1].toFixed(2)} ${this.elements[4].toFixed(2)} ${this.elements[7].toFixed(2)}|\n|${this.elements[2].toFixed(2)} ${this.elements[5].toFixed(2)} ${this.elements[8].toFixed(2)}|`;
+    }
 }

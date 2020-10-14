@@ -1,0 +1,5 @@
+class OBB {
+    constructor (vectors) {
+        
+    }
+}

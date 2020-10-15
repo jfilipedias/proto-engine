@@ -1,8 +1,8 @@
 var origin;
 var cloudPointsA;
 var cloudPointsB;
-var circleBoundingA;
-var circleBoundingB;
+var boundingCircleA;
+var boundingCircleB;
 
 function setup () {
     createCanvas(600, 600);
@@ -13,8 +13,8 @@ function setup () {
     cloudPointsB = createCloud(0, 20, 50, 90, 100);
     //cloudPointsB = createCloud(100, 20, 50, 90, 100);   // This dont collide 
     
-    circleBoundingA = new CircleBounding(cloudPointsA);
-    circleBoundingB = new CircleBounding(cloudPointsB);
+    boundingCircleA = new BoundingCirle(cloudPointsA);
+    boundingCircleB = new BoundingCirle(cloudPointsB);
 }
 
 function draw () {
@@ -29,25 +29,25 @@ function draw () {
 
     noFill();
     stroke(35, 110, 230); // Blue
-
-    if(circleBoundingA.collides(circleBoundingB))   
+    if(boundingCircleA.collides(boundingCircleB))   
         stroke(242, 55, 41); // Red
-    
-    if(circleBoundingA.contains(getMousePosition()))   
-        stroke(255, 204, 0); // Yellow
 
-    circle(origin.x + circleBoundingA.center.x, origin.y - circleBoundingA.center.y, circleBoundingA.radius * 2);
-    
+    // Circle A
+    drawCircle(boundingCircleA);
+
     stroke(35, 110, 230); // Blue
-
-    if(circleBoundingA.collides(circleBoundingB))   
+    if(boundingCircleA.collides(boundingCircleB))   
         stroke(242, 55, 41); // Red
-    
-    if(circleBoundingB.contains(getMousePosition()))   
+
+    // Circle B
+    drawCircle(boundingCircleB);
+}
+
+function drawCircle(circleBounding) {
+    if(circleBounding.contains(getMousePosition()))   
         stroke(255, 204, 0); // Yellow
 
-    circle(origin.x + circleBoundingB.center.x, origin.y - circleBoundingB.center.y, circleBoundingB.radius * 2);
-
+    circle(origin.x + circleBounding.center.x, origin.y - circleBounding.center.y, circleBounding.radius * 2);
 }
 
 function createCloud (x, y, width, height, n) {
@@ -84,9 +84,9 @@ function drawGrid () {
 	text("X", width - 10, origin.y + 20);
 }
 
-function drawBouding (circleBounding) {
+function drawBouding (boundingCircle) {
     var vector = new Vector2(1, 0);
-    vector = circleBounding.matrix.transform(vector);
+    vector = boundingCircle.matrix.transform(vector);
     normal = new Vector2(-vector.y, vector.x);
 
     var projectionV = projectCloud(cloudPoints, vector);
@@ -95,10 +95,10 @@ function drawBouding (circleBounding) {
     var lengthV = projectionV.max - projectionV.min;
     var lengthN = projectionN.max - projectionN.min;
     
-    var pointA = circleBounding.center.add((vector.multiplyScalar(lengthV/2)).subtract(normal.multiplyScalar(lengthN/2)));
-    var pointB = circleBounding.center.subtract((vector.multiplyScalar(lengthV/2)).add(normal.multiplyScalar(lengthN/2)));
-    var pointC = circleBounding.center.subtract((vector.multiplyScalar(lengthV/2)).subtract(normal.multiplyScalar(lengthN/2)));
-    var pointD = circleBounding.center.add((vector.multiplyScalar(lengthV/2)).add(normal.multiplyScalar(lengthN/2)));
+    var pointA = boundingCircle.center.add((vector.multiplyScalar(lengthV/2)).subtract(normal.multiplyScalar(lengthN/2)));
+    var pointB = boundingCircle.center.subtract((vector.multiplyScalar(lengthV/2)).add(normal.multiplyScalar(lengthN/2)));
+    var pointC = boundingCircle.center.subtract((vector.multiplyScalar(lengthV/2)).subtract(normal.multiplyScalar(lengthN/2)));
+    var pointD = boundingCircle.center.add((vector.multiplyScalar(lengthV/2)).add(normal.multiplyScalar(lengthN/2)));
     
     
     line(origin.x + pointA.x , origin.y - pointA.y, origin.x + pointB.x, origin.y - pointB.y);

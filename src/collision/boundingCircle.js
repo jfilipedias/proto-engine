@@ -1,4 +1,4 @@
-class CircleBounding {
+class BoundingCirle {
     constructor(points) {
         if (points === undefined || points === null || points.length === 0)
             return;

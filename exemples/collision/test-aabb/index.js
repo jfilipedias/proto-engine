@@ -75,7 +75,7 @@ function drawGrid () {
 function drawSquare (aabb) {
 
     if (aabb.contains(getMousePosition()))
-	    stroke(30, 30, 30);
+		stroke(255, 204, 0); // Yellow
 
 	line(origin.x + aabb.max.x, origin.y - aabb.max.y, origin.x + aabb.min.x, origin.y - aabb.max.y);
 	line(origin.x + aabb.min.x, origin.y - aabb.max.y, origin.x + aabb.min.x, origin.y - aabb.min.y);

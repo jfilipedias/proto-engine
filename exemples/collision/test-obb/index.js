@@ -16,20 +16,13 @@ function draw () {
 	background(255);
     drawGrid();
 
-    var v = getMousePosition();
-    stroke(35, 110, 230);
-    line(origin.x, origin.y, mouseX, mouseY);
-
-    var n = new Vector2(-v.y, v.x);
-    stroke(242, 55, 41);
-    line(origin.x, origin.y, origin.x + n.x, origin.y - n.y);
     drawCloud(cloudPoints);
 
-    stroke(232, 23, 110);
+    stroke(35, 110, 230); // Blue
+    if (obb.contains(getMousePosition()))
+        stroke(255, 204, 0); // Yellow
+    
     drawOBB(obb);
-
-    stroke(255, 204, 0);
-    drawCustomOBB(v.normalize(), n.normalize());
 }
 
 function createCloud (x, y, width, height, n) {
@@ -78,39 +71,11 @@ function drawOBB (obb) {
     var lengthV = projectionV.max - projectionV.min;
     var lengthN = projectionN.max - projectionN.min;
     
-    var pointA = obb.center.add((vector.multiplyScalar(lengthV/2)).subtract(normal.multiplyScalar(lengthN/2)));
-    var pointB = obb.center.subtract((vector.multiplyScalar(lengthV/2)).add(normal.multiplyScalar(lengthN/2)));
-    var pointC = obb.center.subtract((vector.multiplyScalar(lengthV/2)).subtract(normal.multiplyScalar(lengthN/2)));
-    var pointD = obb.center.add((vector.multiplyScalar(lengthV/2)).add(normal.multiplyScalar(lengthN/2)));
+    var pointA = obb.center.add((vector.multiplyScalar(obb.extent.x)).subtract(normal.multiplyScalar(obb.extent.y)));
+    var pointB = obb.center.subtract((vector.multiplyScalar(obb.extent.x)).add(normal.multiplyScalar(obb.extent.y)));
+    var pointC = obb.center.subtract((vector.multiplyScalar(obb.extent.x)).subtract(normal.multiplyScalar(obb.extent.y)));
+    var pointD = obb.center.add((vector.multiplyScalar(obb.extent.x)).add(normal.multiplyScalar(obb.extent.y)));
     
-    
-    line(origin.x + pointA.x , origin.y - pointA.y, origin.x + pointB.x, origin.y - pointB.y);
-    line(origin.x + pointB.x , origin.y - pointB.y, origin.x + pointC.x, origin.y - pointC.y);
-    line(origin.x + pointC.x , origin.y - pointC.y, origin.x + pointD.x, origin.y - pointD.y);
-    line(origin.x + pointD.x , origin.y - pointD.y, origin.x + pointA.x, origin.y - pointA.y);
-}
-
-function drawCustomOBB (vector, normal) {
-    var projectionV = projectCloud(cloudPoints, vector);
-    var projectionN = projectCloud(cloudPoints, normal);
-
-    var lengthV = projectionV.max - projectionV.min;
-    var lengthN = projectionN.max - projectionN.min;
-
-    var medianV = (projectionV.min + projectionV.max) * 0.5;
-    var medianN = (projectionN.min + projectionN.max) * 0.5;
-
-    var centerN = normal.multiplyScalar(medianN);
-    var centerV = vector.multiplyScalar(medianV);
-    
-    var centerX = (centerV.x + centerN.x);
-    var centerY = (centerV.y + centerN.y);
-    var center = new Vector2(centerX, centerY);    
-   
-    var pointA = center.add((vector.multiplyScalar(lengthV/2)).subtract(normal.multiplyScalar(lengthN/2)));
-    var pointB = center.subtract((vector.multiplyScalar(lengthV/2)).add(normal.multiplyScalar(lengthN/2)));
-    var pointC = center.subtract((vector.multiplyScalar(lengthV/2)).subtract(normal.multiplyScalar(lengthN/2)));
-    var pointD = center.add((vector.multiplyScalar(lengthV/2)).add(normal.multiplyScalar(lengthN/2)));
     
     line(origin.x + pointA.x , origin.y - pointA.y, origin.x + pointB.x, origin.y - pointB.y);
     line(origin.x + pointB.x , origin.y - pointB.y, origin.x + pointC.x, origin.y - pointC.y);

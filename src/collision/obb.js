@@ -31,10 +31,39 @@ class OBB {
                 this.matrix.rotate((i) * Math.PI / 180);
 
                 this.center = this.getCenter(vector, normal, projectionV, projectionN);
+                this.extent = new Vector2(lengthV/2, lengthN/2);
             }
             
             vector = rotationMatrix.transform(vector);
         }
+    }
+
+    contains(point) {
+        var vector = new Vector2(1, 0);
+        vector = this.matrix.transform(vector);
+        var normal = new Vector2(-vector.y, vector.x)
+        
+        // 3 Corners
+        var extentA = obb.center.add((vector.multiplyScalar(obb.extent.x)).subtract(normal.multiplyScalar(obb.extent.y)));
+        var extentB = obb.center.subtract((vector.multiplyScalar(obb.extent.x)).add(normal.multiplyScalar(obb.extent.y)));
+        var extentC = obb.center.subtract((vector.multiplyScalar(obb.extent.x)).subtract(normal.multiplyScalar(obb.extent.y)));
+ 
+        // Porject on axis
+        var minV = extentA.dot(vector); 
+        var maxV = extentB.dot(vector);
+        var minN = extentA.dot(normal); 
+        var maxN = extentC.dot(normal); 
+        
+        var pointInV = point.dot(vector);
+        var pointInN = point.dot(normal);
+
+        var apart = 
+            pointInV < maxV ||
+            pointInV > minV ||
+            pointInN < minN ||
+            pointInN > maxN;
+            
+        return !apart; 
     }
     
     getCenter(vector, normal, projectionV, projectionN) {      

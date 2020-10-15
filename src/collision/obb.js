@@ -27,11 +27,21 @@ class OBB {
             if (actualArea < minArea) {
                 minArea = actualArea;
 
+                // Get Matrix
                 this.matrix.identity();
                 this.matrix.rotate((i) * Math.PI / 180);
-
-                this.center = this.getCenter(vector, normal, projectionV, projectionN);
+                
+                // Get Extent
                 this.extent = new Vector2(lengthV/2, lengthN/2);
+                
+                // Get Center
+                var medianV = (projectionV.min + projectionV.max) * 0.5;
+                var medianN = (projectionN.min + projectionN.max) * 0.5;
+
+                var centerV = vector.multiplyScalar(medianV);
+                var centerN = normal.multiplyScalar(medianN);
+                
+                this.center = new Vector2((centerV.x + centerN.x), (centerV.y + centerN.y));
             }
             
             vector = rotationMatrix.transform(vector);
@@ -64,16 +74,6 @@ class OBB {
             pointInN > maxN;
             
         return !apart; 
-    }
-    
-    getCenter(vector, normal, projectionV, projectionN) {      
-        var medianV = (projectionV.min + projectionV.max) * 0.5;
-        var medianN = (projectionN.min + projectionN.max) * 0.5;
-
-        var centerV = vector.multiplyScalar(medianV);
-        var centerN = normal.multiplyScalar(medianN);
-
-        return new Vector2((centerV.x + centerN.x), (centerV.y + centerN.y));
     }
 
     projectCloud(points, vector) {

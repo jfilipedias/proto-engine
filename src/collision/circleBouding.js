@@ -2,27 +2,37 @@ class CircleBounding {
     constructor(points) {
         if (points === undefined || points === null || points.length === 0)
             return;
-
+        
         var pointA = points[0];
         var pointB = this.pickFurthest(pointA, points);
         var pointC = this.pickFurthest(pointB, points);
+        var pointD = this.pickFurthest(pointC, points);
+        var pointE = this.pickFurthest(pointD, points);
 
-        this.center = new Vector2((pointB.x + pointC.x) * 0.5, (pointB.y + pointC.y) * 0.5);
-        this.radius =  this.center.distanceTo(new Vector2(pointB.x, pointB.y));
+        this.center = new Vector2((pointD.x + pointE.x) * 0.5, (pointD.y + pointE.y) * 0.5);
+        this.radius =  this.center.distanceTo(new Vector2(pointE.x, pointE.y));
+    }
+
+    collides(other) {
+        return this.center.distanceTo(other.center) <= this.radius + other.radius;
+    }
+    
+    contains(vector) {
+        return this.center.distanceTo(vector) <=this.radius; 
     }
 
     pickFurthest(vector, points) {
-        var distance = 0;
-        var furthest = new Vector2();
+        var futhestDistance = -Infinity;
+        var furthestPoint = new Vector2();
             
         for (var i = 0; i < points.length; i++) {
-            if (distance >= vector.distanceTo(points[i]))
+            if (vector.distanceTo(points[i]) < futhestDistance)
                 continue;
 
-            distance = vector.distanceTo(points[i]);
-            furthest = points[i];
+            futhestDistance = vector.distanceTo(points[i]);
+            furthestPoint = points[i];
         }
 
-        return furthest
+        return furthestPoint
     }
 }

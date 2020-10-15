@@ -1,42 +1,65 @@
 var origin;
-var cloudPoints;
-var circleBounding;
+var cloudPointsA;
+var cloudPointsB;
+var circleBoundingA;
+var circleBoundingB;
 
 function setup () {
     createCanvas(600, 600);
     
     origin = new Vector2(width * 0.5, height * 0.5);
     
-    cloudPoints = createCloud(-35, 100, 50, 90, 100);
-
-    circleBounding = new CircleBounding(cloudPoints);
+    cloudPointsA = createCloud(-35, 100, 50, 90, 100);
+    cloudPointsB = createCloud(0, 20, 50, 90, 100);
+    //cloudPointsB = createCloud(100, 20, 50, 90, 100);   // This dont collide 
+    
+    circleBoundingA = new CircleBounding(cloudPointsA);
+    circleBoundingB = new CircleBounding(cloudPointsB);
 }
 
 function draw () {
 	background(255);
     drawGrid();
     
-    drawCloud(cloudPoints);
+    stroke(30);
+    drawCloud(cloudPointsA);
+
+    stroke(232, 23, 110);
+    drawCloud(cloudPointsB);
 
     noFill();
-    stroke(232, 23, 110);
-    circle(origin.x + circleBounding.center.x, origin.y - circleBounding.center.y, circleBounding.radius * 2);
-    console.log(origin.x + circleBounding.center.x, origin.y - circleBounding.center.y, circleBounding.radius * 2);
+    stroke(35, 110, 230); // Blue
 
-    stroke(255, 204, 0);
+    if(circleBoundingA.collides(circleBoundingB))   
+        stroke(242, 55, 41); // Red
+    
+    if(circleBoundingA.contains(getMousePosition()))   
+        stroke(255, 204, 0); // Yellow
+
+    circle(origin.x + circleBoundingA.center.x, origin.y - circleBoundingA.center.y, circleBoundingA.radius * 2);
+    
+    stroke(35, 110, 230); // Blue
+
+    if(circleBoundingA.collides(circleBoundingB))   
+        stroke(242, 55, 41); // Red
+    
+    if(circleBoundingB.contains(getMousePosition()))   
+        stroke(255, 204, 0); // Yellow
+
+    circle(origin.x + circleBoundingB.center.x, origin.y - circleBoundingB.center.y, circleBoundingB.radius * 2);
+
 }
 
 function createCloud (x, y, width, height, n) {
     var points = [];
 
     for (var i = 0; i < n; i++)
-        points.push(new Vector2( (x + Math.random() * width - i ), (y + Math.random() * height + i) ));
+        points.push(new Vector2( (x + Math.random() * width - i * 0.2), (y + Math.random() * height + i * 0.2) ));
 
     return points;
 }
 
 function drawCloud (points) {
-    stroke(30);
     for (var i = 0; i < points.length; i++)
         circle(origin.x + points[i].x, origin.y - points[i].y, 2);
 }

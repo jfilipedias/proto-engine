@@ -1,5 +1,8 @@
 class OBB {
     constructor(points) {
+        if (points === undefined || points === null || points.length === 0)
+            return;
+            
         this.matrix = new Matrix3();
 
         var vector = new Vector2 (1, 0);

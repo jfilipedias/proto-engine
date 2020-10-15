@@ -9,13 +9,7 @@ function setup () {
     
     cloudPoints = createCloud(-35, 100, 50, 90, 100);
 
-    console.log('Creating OBB...');
-
     obb = new OBB(cloudPoints);
-    
-    console.log(obb.center.toString());
-
-    console.log('OBB created...');
 }
 
 function draw () {
@@ -88,6 +82,7 @@ function drawOBB (obb) {
     var pointB = obb.center.subtract((vector.multiplyScalar(lengthV/2)).add(normal.multiplyScalar(lengthN/2)));
     var pointC = obb.center.subtract((vector.multiplyScalar(lengthV/2)).subtract(normal.multiplyScalar(lengthN/2)));
     var pointD = obb.center.add((vector.multiplyScalar(lengthV/2)).add(normal.multiplyScalar(lengthN/2)));
+    
     
     line(origin.x + pointA.x , origin.y - pointA.y, origin.x + pointB.x, origin.y - pointB.y);
     line(origin.x + pointB.x , origin.y - pointB.y, origin.x + pointC.x, origin.y - pointC.y);

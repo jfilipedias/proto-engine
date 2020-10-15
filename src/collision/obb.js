@@ -9,12 +9,9 @@ class OBB {
         
         var minArea = Infinity;
         
-        // Get better fit
+        // Get better fit between 0 and 90 degrees
         for (var i = 0; i < 90; i++) {
-            console.log('Running...');
-
-            vector = rotationMatrix.transform(vector);
-            var normal = new Vector2(-vector.x, vector.y)
+            var normal = new Vector2(-vector.y, vector.x)
 
             var projectionV = this.projectCloud(points, vector); 
             var projectionN = this.projectCloud(points, normal);
@@ -24,28 +21,17 @@ class OBB {
 
             var actualArea = lengthV * lengthN;
 
-            if (actualArea <= minArea) {
+            if (actualArea < minArea) {
                 minArea = actualArea;
 
                 this.matrix.identity();
-                this.matrix.rotate((i+1) * Math.PI / 180);
+                this.matrix.rotate((i) * Math.PI / 180);
+
+                this.center = this.getCenter(vector, normal, projectionV, projectionN);
             }
+            
+            vector = rotationMatrix.transform(vector);
         }
-
-        var vector = this.matrix.transform(new Vector2 (1, 0));
-        console.log(vector.toString());
-        
-        var normal = new Vector2(-vector.y, vector.x);
-
-        var projectionV = this.projectCloud(points, vector); 
-        var projectionN = this.projectCloud(points, normal);
-
-        var lengthV = projectionV.max - projectionV.min;
-        var lengthN = projectionN.max - projectionN.min;
-
-        this.center = this.getCenter(vector, normal, projectionV, projectionN);
-        
-        this.extent = new Vector2(lengthV/2, lengthN/2);
     }
     
     getCenter(vector, normal, projectionV, projectionN) {      

@@ -27,6 +27,34 @@ class AABB {
         return !apart;
     }
 
+    collidesOBB(obb) {
+        var aabbCenter = this.min.add(this.max).divideScalar(2);
+        
+        // Checking separation on X axis
+        var x = new Vector2(1, 0);
+        var distanceX = Math.abs(aabbCenter.x + obb.center.x);
+
+        var aabbRadiusX = Math.abs(aabbCenter.x + this.max.X);
+        var obbRadiusX = Math.abs(obb.center.dot(x) + obb.extent.dot(x)); // Need correction
+
+        var apartX = aabbRadiusX + obbRadiusX > distanceX;
+
+        // Checking separation on Y axis
+        var y = new Vector2(0, 1);
+        var distanceY = Math.abs(aabbCenter.y + obb.center.y);
+
+        var aabbRadiusY = Math.abs(aabbCenter.y + this.max.y);
+        var obbRadiusY = Math.abs(obb.center.dot(y) + topCorner.dot(y)); // Need correction
+        
+        var apartY = aabbRadiusY + obbRadiusY > distanceY;
+
+        console.log(apartX, apartY);
+
+        var apart = apartX || apartY;
+
+        return !apart;
+    } 
+
     contains(vector) {
         return vector.x >= this.min.x
             && vector.x <= this.max.x

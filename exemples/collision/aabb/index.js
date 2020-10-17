@@ -1,6 +1,8 @@
 var origin;
 var cloudPointsA;
 var cloudPointsB;
+var cloudPointsC;
+var cloudPointsD;
 
 function setup () {
 	createCanvas(600, 600);
@@ -9,7 +11,10 @@ function setup () {
 	
 	cloudPointsA = createCloud(-35, 100, 50, 90, 100);
     cloudPointsB = createCloud(0, 20, 50, 90, 100);
-    //cloudPointsB = createCloud(100, 20, 50, 90, 100);	 // This dont collide
+	//cloudPointsB = createCloud(100, 20, 50, 90, 100);	 // This dont collide
+	
+	cloudPointsC = createCloud(-35, -100, 50, 90, 100);
+    cloudPointsD = createCloud(-70, -150, 50, 90, 100);
 }
 
 function draw () {
@@ -20,22 +25,43 @@ function draw () {
     drawCloud(cloudPointsA);
 
     stroke(232, 23, 110);
-    drawCloud(cloudPointsB);
+	drawCloud(cloudPointsB);
+	
+	stroke(30);
+    drawCloud(cloudPointsC);
+
+    stroke(232, 23, 110);
+    drawCloud(cloudPointsD);
     
     var aabbA = new AABB(cloudPointsA);
     var aabbB = new AABB(cloudPointsB);
+	var aabbC = new AABB(cloudPointsC);
+	
+	var obb = new OBB(cloudPointsD);
     
-    stroke(35, 110, 230);
+    stroke(35, 110, 230);	// Blue
     if (aabbA.collides(aabbB))
-        stroke(242, 55, 41);
+        stroke(242, 55, 41);	// Red
     
     drawSquare(aabbA);
 
-    stroke(35, 110, 230);
+    stroke(35, 110, 230);	// Blue
     if (aabbA.collides(aabbB))
-        stroke(242, 55, 41);
+        stroke(242, 55, 41);	// Red
 
 	drawSquare(aabbB);
+
+	stroke(35, 110, 230);	// Blue
+    if (aabbC.collidesOBB(obb))
+        stroke(242, 55, 41);	// Red
+
+	drawSquare(aabbC);
+	
+	stroke(35, 110, 230);	// Blue
+    if (aabbC.collidesOBB(obb))
+        stroke(242, 55, 41);	// Red
+
+	drawOBB(obb, cloudPointsD);
 }
 
 function createCloud (x, y, width, height, n) {
@@ -72,6 +98,29 @@ function drawGrid () {
 	text("X", width - 10, origin.y + 20);
 }
 
+function drawOBB (obb, cloudPoints) {
+    var vector = new Vector2(1, 0);
+    vector = obb.matrix.transform(vector);
+    normal = new Vector2(-vector.y, vector.x);
+
+    var projectionV = projectCloud(cloudPoints, vector);
+    var projectionN = projectCloud(cloudPoints, normal);
+    
+    var pointA = obb.center.add((vector.multiplyScalar(obb.extent.x)).subtract(normal.multiplyScalar(obb.extent.y)));
+    var pointB = obb.center.subtract((vector.multiplyScalar(obb.extent.x)).add(normal.multiplyScalar(obb.extent.y)));
+    var pointC = obb.center.subtract((vector.multiplyScalar(obb.extent.x)).subtract(normal.multiplyScalar(obb.extent.y)));
+    var pointD = obb.center.add((vector.multiplyScalar(obb.extent.x)).add(normal.multiplyScalar(obb.extent.y)));
+    
+    
+    line(origin.x + pointA.x , origin.y - pointA.y, origin.x + pointB.x, origin.y - pointB.y);
+    line(origin.x + pointB.x , origin.y - pointB.y, origin.x + pointC.x, origin.y - pointC.y);
+    line(origin.x + pointC.x , origin.y - pointC.y, origin.x + pointD.x, origin.y - pointD.y);
+	line(origin.x + pointD.x , origin.y - pointD.y, origin.x + pointA.x, origin.y - pointA.y);
+	
+    line(origin.x + obb.center.x, origin.y - obb.center.y, origin.x + pointD.x, origin.y - pointD.y);
+    //line(origin.x + pointD.x , origin.y - pointD.y, origin.x + pointA.x, origin.y - pointA.y);
+}
+
 function drawSquare (aabb) {
 
     if (aabb.contains(getMousePosition()))
@@ -88,4 +137,17 @@ function getMousePosition () {
     var y = -mouseY + origin.y;
 
     return new Vector2(x, y);
+}
+
+function projectCloud (points, vector) {
+    var max = -Infinity;
+    var min =  Infinity;
+
+    for (var i = 0; i < points.length; i++) {
+        var dot = points[i].dot(vector);
+
+        min = Math.min(min, dot);
+        max = Math.max(max, dot);
+    }
+    return { max, min };
 }

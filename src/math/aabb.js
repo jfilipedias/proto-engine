@@ -35,7 +35,10 @@ class AABB {
         var distanceX = Math.abs(aabbCenter.x + obb.center.x);
 
         var aabbRadiusX = Math.abs(aabbCenter.x + this.max.X);
-        var obbRadiusX = Math.abs(obb.center.dot(x) + obb.extent.dot(x)); // Need correction
+        
+        var obbV = obb.matrix.transform(x);
+        var obbN = new Vector2(-obbX.y, obbX.x);
+        var obbRadiusX = obb.extent.x * obbV.projectOnVector(x).length() + obb.extent.y * obbN.projectOnVector(x).length();
 
         var apartX = aabbRadiusX + obbRadiusX > distanceX;
 
@@ -44,11 +47,12 @@ class AABB {
         var distanceY = Math.abs(aabbCenter.y + obb.center.y);
 
         var aabbRadiusY = Math.abs(aabbCenter.y + this.max.y);
-        var obbRadiusY = Math.abs(obb.center.dot(y) + topCorner.dot(y)); // Need correction
+        var obbRadiusY = obb.extent.x * obbV.projectOnVector(y).length() + obb.extent.y * obbN.projectOnVector(y).length()
         
         var apartY = aabbRadiusY + obbRadiusY > distanceY;
 
-        console.log(apartX, apartY);
+        // Checking separation on V axis
+        // Checking separation on N axis
 
         var apart = apartX || apartY;
 

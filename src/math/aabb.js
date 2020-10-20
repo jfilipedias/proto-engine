@@ -56,14 +56,18 @@ class AABB {
         var inverseRotation = obb.matrix.transpose();
 
         // Checking separation on U axis
-        var aabbToObbU = aabbCenter.projectOnVector(u).add(obb.center.projectOnVector(u));
-        var distanceU = aabbToObbU.length();
+        var distanceU = aabbCenter.projectOnVector(u).add(obb.center.projectOnVector(u)).length();
+        var aabbRadiusProjectionU = aabbCenter.projectOnVector(u).add(aabb.max.projectOnVector(u)).length();
+        var obbRadiusProjectionU = obb.center.projectOnVector(u).add(obb.extent.projectOnVector(u)).length();
         
-        var apartU;
+        var apartU = aabbRadiusProjectionU + obbRadiusProjectionU > distanceU;
 
         // Checking separation on V axis
- 
-        var apartV;
+        var distanceV = aabbCenter.projectOnVector(v).add(obb.center.projectOnVector(v)).length();
+        var aabbRadiusProjectionV = aabbCenter.projectOnVector(v).add(aabb.max.projectOnVector(v)).length();
+        var obbRadiusProjectionV = obb.center.projectOnVector(v).add(obb.extent.projectOnVector(v)).length();
+
+        var apartV = aabbRadiusProjectionV + obbRadiusProjectionV > distanceV;
 
         var apart = apartX || apartY || apartU || apartV;
 

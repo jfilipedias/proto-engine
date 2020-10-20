@@ -5,7 +5,8 @@ class OBB {
             
         this.matrix = new Matrix3();
 
-        var vector = new Vector2 (1, 0);
+        // Local X Axis
+        var u = new Vector2 (1, 0);
         
         var rotationMatrix = new Matrix3();
         rotationMatrix.rotate(Math.PI / 180);
@@ -14,16 +15,18 @@ class OBB {
         
         // Get better fit between 0 and 90 degrees
         for (var i = 0; i < 90; i++) {
-            var normal = new Vector2(-vector.y, vector.x)
+            // Local Y Axis
+            var v = new Vector2(-u.y, u.x)
 
-            var projectionV = this.projectCloud(points, vector); 
-            var projectionN = this.projectCloud(points, normal);
+            var projectionU = this.projectCloud(points, u); 
+            var projectionV = this.projectCloud(points, v);
             
+            var lengthU = projectionU.max - projectionU.min;
             var lengthV = projectionV.max - projectionV.min;
-            var lengthN = projectionN.max - projectionN.min;
 
-            var actualArea = lengthV * lengthN;
+            var actualArea = lengthU * lengthV;
 
+            // Store the better fit
             if (actualArea < minArea) {
                 minArea = actualArea;
 
@@ -32,46 +35,46 @@ class OBB {
                 this.matrix.rotate((i) * Math.PI / 180);
                 
                 // Get Extent
-                this.extent = new Vector2(lengthV/2, lengthN/2);
+                this.extent = new Vector2(lengthU/2, lengthV/2);
                 
                 // Get Center
+                var medianU = (projectionU.min + projectionU.max) * 0.5;
                 var medianV = (projectionV.min + projectionV.max) * 0.5;
-                var medianN = (projectionN.min + projectionN.max) * 0.5;
 
-                var centerV = vector.multiplyScalar(medianV);
-                var centerN = normal.multiplyScalar(medianN);
+                var centerU = u.multiplyScalar(medianU);
+                var centerV = v.multiplyScalar(medianV);
                 
-                this.center = new Vector2((centerV.x + centerN.x), (centerV.y + centerN.y));
+                this.center = new Vector2((centerU.x + centerV.x), (centerU.y + centerV.y));
             }
             
-            vector = rotationMatrix.transform(vector);
+            u = rotationMatrix.transform(u);
         }
     }
 
     contains(point) {
-        var vector = new Vector2(1, 0);
-        vector = this.matrix.transform(vector);
-        var normal = new Vector2(-vector.y, vector.x)
+        var u = new Vector2(1, 0);
+        u = this.matrix.transform(u);
+        var v = new Vector2(-u.y, u.x)
         
         // 3 Corners
-        var extentA = obb.center.add((vector.multiplyScalar(obb.extent.x)).subtract(normal.multiplyScalar(obb.extent.y)));
-        var extentB = obb.center.subtract((vector.multiplyScalar(obb.extent.x)).add(normal.multiplyScalar(obb.extent.y)));
-        var extentC = obb.center.subtract((vector.multiplyScalar(obb.extent.x)).subtract(normal.multiplyScalar(obb.extent.y)));
+        var extentA = obb.center.add((u.multiplyScalar(obb.extent.x)).subtract(v.multiplyScalar(obb.extent.y)));
+        var extentB = obb.center.subtract((u.multiplyScalar(obb.extent.x)).add(v.multiplyScalar(obb.extent.y)));
+        var extentC = obb.center.subtract((u.multiplyScalar(obb.extent.x)).subtract(v.multiplyScalar(obb.extent.y)));
  
         // Porject on axis
-        var minV = extentA.dot(vector); 
-        var maxV = extentB.dot(vector);
-        var minN = extentA.dot(normal); 
-        var maxN = extentC.dot(normal); 
+        var minU = extentA.dot(u); 
+        var maxU = extentB.dot(u);
+        var minV = extentA.dot(v); 
+        var maxV = extentC.dot(v); 
         
-        var pointInV = point.dot(vector);
-        var pointInN = point.dot(normal);
+        var pointInU = point.dot(u);
+        var pointInV = point.dot(v);
 
         var apart = 
-            pointInV < maxV ||
-            pointInV > minV ||
-            pointInN < minN ||
-            pointInN > maxN;
+            pointInU < maxU ||
+            pointInU > minU ||
+            pointInV < minV ||
+            pointInV > maxV;
             
         return !apart; 
     }

@@ -54,6 +54,19 @@ class Matrix3 {
             0, 0, 1,
         ];
     }
+
+    transpose() {
+        var e = this.elements;
+        
+        var matrix = new Matrix3();
+        matrix.elements = [
+            e[0], e[3], e[6],
+            e[1], e[4], e[7],
+            e[2], e[5], e[8]
+        ]; 
+        
+        return matrix;
+    }
     
     transform(other) {
         var te = this.elements;

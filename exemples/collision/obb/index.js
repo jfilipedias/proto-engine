@@ -61,26 +61,23 @@ function drawGrid () {
 }
 
 function drawOBB (obb) {
-    var vector = new Vector2(1, 0);
-    vector = obb.matrix.transform(vector);
-    normal = new Vector2(-vector.y, vector.x);
+    var u = new Vector2(1, 0);
+    u = obb.matrix.transform(u);
+    var v = new Vector2(-u.y, u.x);
 
-    var projectionV = projectCloud(cloudPoints, vector);
-    var projectionN = projectCloud(cloudPoints, normal);
-
-    var lengthV = projectionV.max - projectionV.min;
-    var lengthN = projectionN.max - projectionN.min;
+    var projectionU = projectCloud(cloudPoints, u);
+    var projectionV = projectCloud(cloudPoints, v);
     
-    var pointA = obb.center.add((vector.multiplyScalar(obb.extent.x)).subtract(normal.multiplyScalar(obb.extent.y)));
-    var pointB = obb.center.subtract((vector.multiplyScalar(obb.extent.x)).add(normal.multiplyScalar(obb.extent.y)));
-    var pointC = obb.center.subtract((vector.multiplyScalar(obb.extent.x)).subtract(normal.multiplyScalar(obb.extent.y)));
-    var pointD = obb.center.add((vector.multiplyScalar(obb.extent.x)).add(normal.multiplyScalar(obb.extent.y)));
+    var pointA = obb.center.add((u.multiplyScalar(obb.extent.x)).subtract(v.multiplyScalar(obb.extent.y)));
+    var pointB = obb.center.subtract((u.multiplyScalar(obb.extent.x)).add(v.multiplyScalar(obb.extent.y)));
+    var pointC = obb.center.subtract((u.multiplyScalar(obb.extent.x)).subtract(v.multiplyScalar(obb.extent.y)));
+    var pointD = obb.center.add((u.multiplyScalar(obb.extent.x)).add(v.multiplyScalar(obb.extent.y)));
     
     
     line(origin.x + pointA.x , origin.y - pointA.y, origin.x + pointB.x, origin.y - pointB.y);
     line(origin.x + pointB.x , origin.y - pointB.y, origin.x + pointC.x, origin.y - pointC.y);
     line(origin.x + pointC.x , origin.y - pointC.y, origin.x + pointD.x, origin.y - pointD.y);
-    line(origin.x + pointD.x , origin.y - pointD.y, origin.x + pointA.x, origin.y - pointA.y);
+	line(origin.x + pointD.x , origin.y - pointD.y, origin.x + pointA.x, origin.y - pointA.y);
 }
 
 function getMousePosition () {

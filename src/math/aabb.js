@@ -28,33 +28,44 @@ class AABB {
     }
 
     collidesOBB(obb) {
-        var aabbCenter = this.min.add(this.max).divideScalar(2);
-        
-        // Checking separation on X axis
+        var aabbCenter = this.min.add(this.max).multiplyScalar(0.5);
+ 
+        // AABB Axis
         var x = new Vector2(1, 0);
+        var y = new Vector2(0, 1);
+
+        // OBB Axis
+        var u = obb.matrix.transform(x);        // OBB X Axis
+        var v = new Vector2(-obbX.y, obbX.x);   // OBB Y Axis
+
+        // Checking separation on X axis
         var distanceX = Math.abs(aabbCenter.x + obb.center.x);
+        var aabbRadiusProjectionX = Math.abs(aabbCenter.x + this.max.X);
+        var obbRadiusProjectionX = obb.extent.x * u.projectOnVector(x).length() + obb.extent.y * v.projectOnVector(x).length();
 
-        var aabbRadiusX = Math.abs(aabbCenter.x + this.max.X);
-        
-        var obbV = obb.matrix.transform(x);
-        var obbN = new Vector2(-obbX.y, obbX.x);
-        var obbRadiusX = obb.extent.x * obbV.projectOnVector(x).length() + obb.extent.y * obbN.projectOnVector(x).length();
-
-        var apartX = aabbRadiusX + obbRadiusX > distanceX;
+        var apartX = aabbRadiusProjectionX + obbRadiusProjectionX > distanceX;
 
         // Checking separation on Y axis
-        var y = new Vector2(0, 1);
         var distanceY = Math.abs(aabbCenter.y + obb.center.y);
-
-        var aabbRadiusY = Math.abs(aabbCenter.y + this.max.y);
-        var obbRadiusY = obb.extent.x * obbV.projectOnVector(y).length() + obb.extent.y * obbN.projectOnVector(y).length()
+        var aabbRadiusProjectionY = Math.abs(aabbCenter.y + this.max.y);
+        var obbRadiusProjectionY = obb.extent.x * u.projectOnVector(y).length() + obb.extent.y * v.projectOnVector(y).length()
         
-        var apartY = aabbRadiusY + obbRadiusY > distanceY;
+        var apartY = aabbRadiusProjectionY + obbRadiusProjectionY > distanceY;
+
+        // Rotate to OBB space
+        var inverseRotation = obb.matrix.transpose();
+
+        // Checking separation on U axis
+        var aabbToObbU = aabbCenter.projectOnVector(u).add(obb.center.projectOnVector(u));
+        var distanceU = aabbToObbU.length();
+        
+        var apartU;
 
         // Checking separation on V axis
-        // Checking separation on N axis
+ 
+        var apartV;
 
-        var apart = apartX || apartY;
+        var apart = apartX || apartY || apartU || apartV;
 
         return !apart;
     } 

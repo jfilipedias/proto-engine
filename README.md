@@ -1,7 +1,6 @@
 # proto-engine
 
-This project is a study about math and physics for games using javascript and [p5.js](https://p5js.org/) library. That said, this project seeks to produce a visual representation 
-of linear algebra foundation. Some topics covered in this project are:
+This project is a study about math and physics for games using javascript and [p5.js](https://p5js.org/) library. That said, the porpouse of this project is to create a visual representation of linear algebra foundation. Some topics covered in this project are:
 
 - [Vector](https://en.wikipedia.org/wiki/Vector_(mathematics_and_physics)) 
 - [Matrices](https://en.wikipedia.org/wiki/Matrix_(mathematics))

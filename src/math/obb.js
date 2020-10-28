@@ -91,4 +91,14 @@ class OBB {
 
         return { max, min };
     }
+
+    getPoints() {
+        var points = [];
+        points.push(obb.center.add((u.multiplyScalar(obb.extent.x)).subtract(v.multiplyScalar(obb.extent.y))));
+        points.push(obb.center.subtract((u.multiplyScalar(obb.extent.x)).add(v.multiplyScalar(obb.extent.y))));
+        points.push(obb.center.subtract((u.multiplyScalar(obb.extent.x)).subtract(v.multiplyScalar(obb.extent.y))));
+        points.push(obb.center.add((u.multiplyScalar(obb.extent.x)).add(v.multiplyScalar(obb.extent.y))));
+
+        return points;
+    }
 }

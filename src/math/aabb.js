@@ -28,6 +28,8 @@ class AABB {
     }
 
     collidesOBB(obb) {
+        var apart = false;
+
         var aabbEdges = [];
         aabbEdges.push(new Vector2(this.max.x - this.min.x, this.min.y));
         aabbEdges.push(new Vector2(this.max.x, this.min.y - this.max.y));
@@ -41,6 +43,37 @@ class AABB {
         obbEdges.push(new Vector2(obbPoints[2].x - obbPoints[1].x, obbPoints[2].y - obbPoints[1].y));
         obbEdges.push(new Vector2(obbPoints[3].x - obbPoints[2].x, obbPoints[3].y - obbPoints[2].y));
         obbEdges.push(new Vector2(obbPoints[0].x - obbPoints[3].x, obbPoints[0].y - obbPoints[3].y));
+
+        var edges = aabbEdges.concat(obbEdges);
+
+        for (var i = 0; i < edges.length; i++) {
+            var separatingAxis = new Vector2(edges.y, -edges.x);
+            
+            var aabbMin = +Infinity;
+            var aabbMax = -Infinity;
+
+            for (var j = 0; j < aabbEdges.length; j++) {
+                var projection = aabbEdges.dot(separatingAxis);
+
+                aabbMin = min(aabbMin, projection);
+                aabbMax = max(aabbMax, projection);
+            }
+
+            var obbMin = +Infinity;
+            var obbMax = -Infinity;
+
+            for (var j = 0; j < obbEdges.length; j++) {
+                var projection = obbEdges.dot(separatingAxis);
+
+                obbMin = min(obbMin, projection);
+                obbMax = max(obbMax, projection);
+            }
+
+            if (aabbMax < obbMin || obbMax < aabbMin) {
+                apart = true;
+                break;
+            }
+        }        
 
         return !apart;
     } 

@@ -1,8 +1,6 @@
 var origin;
 var cloudPointsA;
 var cloudPointsB;
-var cloudPointsC;
-var cloudPointsD;
 
 function setup () {
 	createCanvas(600, 600);
@@ -26,18 +24,9 @@ function draw () {
 
     stroke(232, 23, 110);
 	drawCloud(cloudPointsB);
-	
-	stroke(30);
-    drawCloud(cloudPointsC);
-
-    stroke(232, 23, 110);
-    drawCloud(cloudPointsD);
     
     var aabbA = new AABB(cloudPointsA);
     var aabbB = new AABB(cloudPointsB);
-	var aabbC = new AABB(cloudPointsC);
-	
-	var obb = new OBB(cloudPointsD);
     
     stroke(35, 110, 230);	// Blue
     if (aabbA.collides(aabbB))
@@ -50,18 +39,6 @@ function draw () {
         stroke(242, 55, 41);	// Red
 
 	drawSquare(aabbB);
-
-	stroke(35, 110, 230);	// Blue
-    if (aabbC.collidesOBB(obb))
-        stroke(242, 55, 41);	// Red
-
-	drawSquare(aabbC);
-	
-	stroke(35, 110, 230);	// Blue
-    if (aabbC.collidesOBB(obb))
-        stroke(242, 55, 41);	// Red
-
-	drawOBB(obb, cloudPointsD);
 }
 
 function createCloud (x, y, width, height, n) {

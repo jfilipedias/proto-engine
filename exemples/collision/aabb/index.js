@@ -1,29 +1,29 @@
 var origin;
-var cloudPointsA;
-var cloudPointsB;
+var cloudPointsA = [];
+var cloudPointsB = [];
+var canDrawCloudA = false;
+var canDrawCloudB = false;
 
 function setup () {
 	createCanvas(600, 600);
 
 	origin = new Vector2(width/2, height/2);
-	
-	cloudPointsA = createCloud(-35, 100, 50, 90, 100);
-    cloudPointsB = createCloud(0, 20, 50, 90, 100);
-	//cloudPointsB = createCloud(100, 20, 50, 90, 100);	 // This dont collide
-	
-	cloudPointsC = createCloud(-35, -100, 50, 90, 100);
-    cloudPointsD = createCloud(-70, -150, 50, 90, 100);
 }
 
 function draw () {
 	background(255);
-	drawGrid();
+    drawGrid();
+    
+    if (!canDrawCloudA || !canDrawCloudB)
+        getCloudPoints();
 	
 	stroke(30);
-    drawCloud(cloudPointsA);
+    if (cloudPointsA.length > 0  && canDrawCloudA) 
+        drawCloud(cloudPointsA);
 
     stroke(232, 23, 110);
-	drawCloud(cloudPointsB);
+	if (cloudPointsB.length > 0  && canDrawCloudB) 
+        drawCloud(cloudPointsB);
     
     var aabbA = new AABB(cloudPointsA);
     var aabbB = new AABB(cloudPointsB);
@@ -39,6 +39,10 @@ function draw () {
         stroke(242, 55, 41);	// Red
 
 	drawSquare(aabbB);
+}
+
+function getCloudPoints () {
+    
 }
 
 function createCloud (x, y, width, height, n) {

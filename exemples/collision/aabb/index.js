@@ -17,32 +17,10 @@ function draw () {
     drawAABBs();
     drawBuffer();
     drawClouds();
-
-	/* stroke(30);
-    if (cloudPointsA.length > 0  && canDrawCloudA) {}
-        drawCloud(cloudPointsA);
-
-    stroke(232, 23, 110);
-	if (cloudPointsB.length > 0  && canDrawCloudB) 
-        drawCloud(cloudPointsB);
-    
-    var aabbA = new AABB(cloudPointsA);
-    var aabbB = new AABB(cloudPointsB);
-    
-    stroke(35, 110, 230);	// Blue
-    if (aabbA.collides(aabbB))
-        stroke(242, 55, 41);	// Red
-    
-    drawSquare(aabbA);
-
-    stroke(35, 110, 230);	// Blue
-    if (aabbA.collides(aabbB))
-        stroke(242, 55, 41);	// Red
-        
-    drawSquare(aabbB); */
 }
 
 function clearAll () {
+    aabbs = [];
     clouds = [];
     pointsBuffer = [];
 }
@@ -50,18 +28,34 @@ function clearAll () {
 function drawAABBs () {
     if (aabbs.length === 0) return;
     
-    /* if (aabb.contains(getMousePosition()))
-		stroke(255, 204, 0); // Yellow
+    for (var i = 0; i < aabbs.length; i++) {
+        var collides = false;
+        
+        // TODO: Check collision against other AABBs
+        /* for (var j = 0 ) {
+            collides = aabbA.collides(aabbB)
+        } */            
+    
+        stroke(35, 110, 230);       // Blue
+        
+        if (collides)
+            stroke(242, 55, 41);    // Red
+        
+        if (aabbs[i].contains(getMousePosition()))
+    		stroke(255, 204, 0);    // Yellow
 
-	line(origin.x + aabb.max.x, origin.y - aabb.max.y, origin.x + aabb.min.x, origin.y - aabb.max.y);
-	line(origin.x + aabb.min.x, origin.y - aabb.max.y, origin.x + aabb.min.x, origin.y - aabb.min.y);
-	line(origin.x + aabb.min.x, origin.y - aabb.min.y, origin.x + aabb.max.x, origin.y - aabb.min.y);
-	line(origin.x + aabb.max.x, origin.y - aabb.min.y, origin.x + aabb.max.x, origin.y - aabb.max.y); */
+        line(origin.x + aabbs[i].max.x, origin.y - aabbs[i].max.y, origin.x + aabbs[i].min.x, origin.y - aabbs[i].max.y);
+        line(origin.x + aabbs[i].min.x, origin.y - aabbs[i].max.y, origin.x + aabbs[i].min.x, origin.y - aabbs[i].min.y);
+        line(origin.x + aabbs[i].min.x, origin.y - aabbs[i].min.y, origin.x + aabbs[i].max.x, origin.y - aabbs[i].min.y);
+        line(origin.x + aabbs[i].max.x, origin.y - aabbs[i].min.y, origin.x + aabbs[i].max.x, origin.y - aabbs[i].max.y);
+    }
 }
 
 function drawBuffer () {
     if (pointsBuffer.length === 0) return;
 
+    stroke (30, 30, 30);
+    fill (30, 30, 30);
     for (var i = 0; i < pointsBuffer.length; i++)
         circle(origin.x + pointsBuffer[i].x, origin.y - pointsBuffer[i].y, 2);
 }
@@ -120,7 +114,12 @@ function keyPressed () {
 }
 
 function mouseClicked () {
-    pointsBuffer.push(getMousePosition());
+    var mousePosition = getMousePosition();
+
+    if (mousePosition.x < -origin.x || mousePosition.x > origin.x || mousePosition.y < -origin.y || mousePosition.y > origin.y) 
+        return;
+        
+    pointsBuffer.push(mousePosition);
 }
 
 function projectCloud (points, vector) {

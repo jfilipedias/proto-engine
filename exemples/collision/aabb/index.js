@@ -30,24 +30,32 @@ function drawAABBs () {
     
     for (var i = 0; i < aabbs.length; i++) {
         var collides = false;
+        var currentAABB = aabbs[i];
         
-        // TODO: Check collision against other AABBs
-        /* for (var j = 0 ) {
-            collides = aabbA.collides(aabbB)
-        } */            
+        var others = aabbs.filter( function (aabb) {
+            var equal = Object.is(currentAABB, aabb);
+            return !equal;
+        });
+
+
+        for (var j = 0; j < others.length; j++) {
+            collides = currentAABB.collides(others[j]);
+
+            if (collides) break;
+        }            
     
         stroke(35, 110, 230);       // Blue
         
         if (collides)
             stroke(242, 55, 41);    // Red
         
-        if (aabbs[i].contains(getMousePosition()))
+        if (currentAABB.contains(getMousePosition()))
     		stroke(255, 204, 0);    // Yellow
 
-        line(origin.x + aabbs[i].max.x, origin.y - aabbs[i].max.y, origin.x + aabbs[i].min.x, origin.y - aabbs[i].max.y);
-        line(origin.x + aabbs[i].min.x, origin.y - aabbs[i].max.y, origin.x + aabbs[i].min.x, origin.y - aabbs[i].min.y);
-        line(origin.x + aabbs[i].min.x, origin.y - aabbs[i].min.y, origin.x + aabbs[i].max.x, origin.y - aabbs[i].min.y);
-        line(origin.x + aabbs[i].max.x, origin.y - aabbs[i].min.y, origin.x + aabbs[i].max.x, origin.y - aabbs[i].max.y);
+        line(origin.x + currentAABB.max.x, origin.y - currentAABB.max.y, origin.x + currentAABB.min.x, origin.y - currentAABB.max.y);
+        line(origin.x + currentAABB.min.x, origin.y - currentAABB.max.y, origin.x + currentAABB.min.x, origin.y - currentAABB.min.y);
+        line(origin.x + currentAABB.min.x, origin.y - currentAABB.min.y, origin.x + currentAABB.max.x, origin.y - currentAABB.min.y);
+        line(origin.x + currentAABB.max.x, origin.y - currentAABB.min.y, origin.x + currentAABB.max.x, origin.y - currentAABB.max.y);
     }
 }
 

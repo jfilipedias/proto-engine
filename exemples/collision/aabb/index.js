@@ -37,7 +37,6 @@ function drawAABBs () {
             return !equal;
         });
 
-
         for (var j = 0; j < others.length; j++) {
             collides = currentAABB.collides(others[j]);
 

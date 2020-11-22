@@ -16,11 +16,11 @@ function draw () {
 
     drawBuffer();
     drawClouds();
-    //drawOBBs();
+    drawOBBs();
 }
 
 function clearAll () {
-    aabbs = [];
+    obbs = [];
     clouds = [];
     pointsBuffer = [];
 }
@@ -72,18 +72,39 @@ function drawGrid () {
 	text("X", width - 10, origin.y + 20);
 }
 
-// TODO: refactor
 function drawOBBs () {
-    var u = new Vector2(1, 0);
-    u = obb.matrix.transform(u);
-    var v = new Vector2(-u.y, u.x);
+    if (obbs.length === 0) return;
 
-    var obbPoints = obb.getPoints();
+    for (var i = 0; i < obbs.length; i++) {
+        var collides = false;
+        var currentOBB = obbs[i];
+
+        var others = obbs.filter( function (obb) {
+            var equal = Object.is(currentOBB, obb);
+            return !equal;
+        });
+
+        for (var j = 0; j < others.length; j++) {
+            collides = currentOBB.collides(others[j]);
+
+            if (collides) break;
+        }            
     
-    line(origin.x + obbPoints[0].x , origin.y - obbPoints[0].y, origin.x + obbPoints[1].x, origin.y - obbPoints[1].y);
-    line(origin.x + obbPoints[1].x , origin.y - obbPoints[1].y, origin.x + obbPoints[2].x, origin.y - obbPoints[2].y);
-    line(origin.x + obbPoints[2].x , origin.y - obbPoints[2].y, origin.x + obbPoints[3].x, origin.y - obbPoints[3].y);
-	line(origin.x + obbPoints[3].x , origin.y - obbPoints[3].y, origin.x + obbPoints[0].x, origin.y - obbPoints[0].y);
+        stroke(35, 110, 230);       // Blue
+        
+        if (collides)
+            stroke(242, 55, 41);    // Red
+        
+        if (currentOBB.contains(getMousePosition()))
+    		stroke(255, 204, 0);    // Yellow
+
+        var obbPoints = currentOBB.getPoints();
+        
+        line(origin.x + obbPoints[0].x , origin.y - obbPoints[0].y, origin.x + obbPoints[1].x, origin.y - obbPoints[1].y);
+        line(origin.x + obbPoints[1].x , origin.y - obbPoints[1].y, origin.x + obbPoints[2].x, origin.y - obbPoints[2].y);
+        line(origin.x + obbPoints[2].x , origin.y - obbPoints[2].y, origin.x + obbPoints[3].x, origin.y - obbPoints[3].y);
+        line(origin.x + obbPoints[3].x , origin.y - obbPoints[3].y, origin.x + obbPoints[0].x, origin.y - obbPoints[0].y);
+    }
 }
 
 function getMousePosition () {
@@ -119,8 +140,8 @@ function setCloud () {
 
     cloudsColors.push([r, g, b]);
 
-    var aabb = new AABB(pointsBuffer);
-    aabbs.push(aabb);
+    var obb = new OBB(pointsBuffer);
+    obbs.push(obb);
 
     pointsBuffer = [];
 }

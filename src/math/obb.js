@@ -69,9 +69,8 @@ class OBB {
         otherEdges.push(new Vector2(otherPoints[3].x - otherPoints[2].x, otherPoints[3].y - otherPoints[2].y));
         otherEdges.push(new Vector2(otherPoints[0].x - otherPoints[3].x, otherPoints[0].y - otherPoints[3].y));
 
-        var separatingAxis = this.getSeparatingAxis(edges, otherEdges);
-
-        var apart = Boolean(separatingAxis !== null);
+        var apart = this.getSeparatingAxis(edges, otherEdges);
+        console.log('apart:', apart);
         return !apart;
     }
 
@@ -90,9 +89,7 @@ class OBB {
         obbEdges.push(new Vector2(obbPoints[3].x - obbPoints[2].x, obbPoints[3].y - obbPoints[2].y));
         obbEdges.push(new Vector2(obbPoints[0].x - obbPoints[3].x, obbPoints[0].y - obbPoints[3].y));
 
-        var separatingAxis = this.getSeparatingAxis(aabbEdges, obbEdges);
-
-        var apart = Boolean(separatingAxis !== null);
+        var apart = this.getSeparatingAxis(aabbEdges, obbEdges);
         return !apart;
     }
 
@@ -102,9 +99,9 @@ class OBB {
         var v = new Vector2(-u.y, u.x)
         
         // 3 Corners
-        var extentA = obb.center.add((u.multiplyScalar(obb.extent.x)).subtract(v.multiplyScalar(obb.extent.y)));
-        var extentB = obb.center.subtract((u.multiplyScalar(obb.extent.x)).add(v.multiplyScalar(obb.extent.y)));
-        var extentC = obb.center.subtract((u.multiplyScalar(obb.extent.x)).subtract(v.multiplyScalar(obb.extent.y)));
+        var extentA = this.center.add((u.multiplyScalar(this.extent.x)).subtract(v.multiplyScalar(this.extent.y)));
+        var extentB = this.center.subtract((u.multiplyScalar(this.extent.x)).add(v.multiplyScalar(this.extent.y)));
+        var extentC = this.center.subtract((u.multiplyScalar(this.extent.x)).subtract(v.multiplyScalar(this.extent.y)));
  
         // Porject on axis
         var minU = extentA.dot(u); 
@@ -138,26 +135,31 @@ class OBB {
     }
 
     getPoints() {
+        var u = new Vector2(1, 0);
+        u = this.matrix.transform(u);
+        var v = new Vector2(-u.y, u.x);
+
         var points = [];
-        points.push(obb.center.add((u.multiplyScalar(obb.extent.x)).subtract(v.multiplyScalar(obb.extent.y))));
-        points.push(obb.center.subtract((u.multiplyScalar(obb.extent.x)).add(v.multiplyScalar(obb.extent.y))));
-        points.push(obb.center.subtract((u.multiplyScalar(obb.extent.x)).subtract(v.multiplyScalar(obb.extent.y))));
-        points.push(obb.center.add((u.multiplyScalar(obb.extent.x)).add(v.multiplyScalar(obb.extent.y))));
+        points.push(this.center.add((u.multiplyScalar(this.extent.x)).subtract(v.multiplyScalar(this.extent.y))));
+        points.push(this.center.subtract((u.multiplyScalar(this.extent.x)).add(v.multiplyScalar(this.extent.y))));
+        points.push(this.center.subtract((u.multiplyScalar(this.extent.x)).subtract(v.multiplyScalar(this.extent.y))));
+        points.push(this.center.add((u.multiplyScalar(this.extent.x)).add(v.multiplyScalar(this.extent.y))));
 
         return points;
     }
 
     getSeparatingAxis(edgesA, edgesB) {
+        var apart = false;
         var edges = edgesA.concat(edgesB);
 
         for (var i = 0; i < edges.length; i++) {
-            var separatingAxis = new Vector2(edges.y, -edges.x);
+            var separatingAxis = new Vector2(edges[i].y, -edges[i].x);
             
             var minA = +Infinity;
             var maxA = -Infinity;
 
             for (var j = 0; j < edgesA.length; j++) {
-                var projection = edgesA.dot(separatingAxis);
+                var projection = edgesA[j].dot(separatingAxis);
 
                 minA = min(minA, projection);
                 maxA = max(maxA, projection);
@@ -167,16 +169,18 @@ class OBB {
             var maxB = -Infinity;
 
             for (var j = 0; j < edgesB.length; j++) {
-                var projection = edgesB.dot(separatingAxis);
+                var projection = edgesB[j].dot(separatingAxis);
 
                 minB = min(minB, projection);
                 maxB = max(maxB, projection);
             }
 
-            if (maxA < minB || maxB < minA)
-                return separatingAxis;
+            if (maxA < minB || maxB < minA) {
+                apart = true;
+                break;
+            }
         }
 
-        return null;
+        return apart;
     }
 }

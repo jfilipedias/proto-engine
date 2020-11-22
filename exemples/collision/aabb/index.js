@@ -130,19 +130,6 @@ function mouseClicked () {
     pointsBuffer.push(mousePosition);
 }
 
-function projectCloud (points, vector) {
-    var max = -Infinity;
-    var min =  Infinity;
-
-    for (var i = 0; i < points.length; i++) {
-        var dot = points[i].dot(vector);
-
-        min = Math.min(min, dot);
-        max = Math.max(max, dot);
-    }
-    return { max, min };
-}
-
 function setCloud () {
     clouds.push(pointsBuffer);
 

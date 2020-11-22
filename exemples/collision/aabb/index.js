@@ -7,7 +7,7 @@ var pointsBuffer = [];
 function setup () {
 	createCanvas(600, 600);
 
-	origin = new Vector2(width/2, height/2);
+	origin = new Vector2(width * 0.5, height * 0.5);
 }
 
 function draw () {

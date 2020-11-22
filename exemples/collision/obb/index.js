@@ -1,43 +1,55 @@
+var clouds = [];
+var cloudsColors = [];
+var obbs = [];
 var origin;
-var cloudPoints;
-var obb;
+var pointsBuffer =[];
 
 function setup () {
     createCanvas(600, 600);
     
     origin = new Vector2(width * 0.5, height * 0.5);
-    
-    cloudPoints = createCloud(-35, 100, 50, 90, 100);
-
-    obb = new OBB(cloudPoints);
 }
 
 function draw () {
 	background(255);
     drawGrid();
 
-    drawCloud(cloudPoints);
-
-    stroke(35, 110, 230); // Blue
-    if (obb.contains(getMousePosition()))
-        stroke(255, 204, 0); // Yellow
-    
-    drawOBB(obb);
+    drawBuffer();
+    drawClouds();
+    //drawOBBs();
 }
 
-function createCloud (x, y, width, height, n) {
-    var points = [];
-
-    for (var i = 0; i < n; i++)
-        points.push(new Vector2( (x + Math.random() * width - i ), (y + Math.random() * height + i) ));
-
-    return points;
+function clearAll () {
+    aabbs = [];
+    clouds = [];
+    pointsBuffer = [];
 }
 
-function drawCloud (points) {
-    stroke(30);
-    for (var i = 0; i < points.length; i++)
-        circle(origin.x + points[i].x, origin.y - points[i].y, 2);
+function drawBuffer () {
+    if (pointsBuffer.length === 0) return;
+
+    stroke (30, 30, 30);
+    fill (30, 30, 30);
+    for (var i = 0; i < pointsBuffer.length; i++)
+        circle(origin.x + pointsBuffer[i].x, origin.y - pointsBuffer[i].y, 2);
+}
+
+function drawClouds () {
+    if (clouds.length === 0) return;
+
+    for (var i = 0; i < clouds.length; i++) {
+        var currentCloud = clouds[i];
+
+        var r = cloudsColors[i][0];
+        var g = cloudsColors[i][1];
+        var b = cloudsColors[i][2];
+        
+        fill(r, g, b);
+        stroke (r, g, b);
+ 
+        for (var j = 0; j < currentCloud.length; j++)  
+            circle(origin.x + currentCloud[j].x, origin.y - currentCloud[j].y, 2);
+    }
 }
 
 function drawGrid () {
@@ -60,7 +72,8 @@ function drawGrid () {
 	text("X", width - 10, origin.y + 20);
 }
 
-function drawOBB (obb) {
+// TODO: refactor
+function drawOBBs () {
     var u = new Vector2(1, 0);
     u = obb.matrix.transform(u);
     var v = new Vector2(-u.y, u.x);
@@ -80,15 +93,34 @@ function getMousePosition () {
     return new Vector2(x, y);
 }
 
-function projectCloud (points, vector) {
-    var max = -Infinity;
-    var min =  Infinity;
+function keyPressed () {
+    if (keyCode === 13)
+        setCloud();
+    
+    if (keyCode === 27)
+        clearAll();
+}
 
-    for (var i = 0; i < points.length; i++) {
-        var dot = points[i].dot(vector);
+function mouseClicked () {
+    var mousePosition = getMousePosition();
 
-        min = Math.min(min, dot);
-        max = Math.max(max, dot);
-    }
-    return { max, min };
+    if (mousePosition.x < -origin.x || mousePosition.x > origin.x || mousePosition.y < -origin.y || mousePosition.y > origin.y) 
+        return;
+        
+    pointsBuffer.push(mousePosition);
+}
+
+function setCloud () {
+    clouds.push(pointsBuffer);
+
+    var r = random(240);
+    var g = random(240);
+    var b = random(240); 
+
+    cloudsColors.push([r, g, b]);
+
+    var aabb = new AABB(pointsBuffer);
+    aabbs.push(aabb);
+
+    pointsBuffer = [];
 }

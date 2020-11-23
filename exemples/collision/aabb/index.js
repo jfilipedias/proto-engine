@@ -113,10 +113,13 @@ function getMousePosition () {
 }
 
 function keyPressed () {
-    if (keyCode === 13)
+    var enterCode = 13;
+    var escCode = 27;
+
+    if (keyCode === enterCode)
         setCloud();
     
-    if (keyCode === 27)
+    if (keyCode === escCode)
         clearAll();
 }
 

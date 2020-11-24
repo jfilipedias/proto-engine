@@ -122,13 +122,13 @@ class OBB {
     }
 
     projectCloud(points, vector) {
+        var min = +Infinity;
         var max = -Infinity;
-        var min =  Infinity;
 
         for (var i = 0; i < points.length; i++) {
-            var dot = points[i].dot(vector);
-            min = Math.min(min, dot);
-            max = Math.max(max, dot);
+            var projection = points[i].dot(vector);
+            min = Math.min(min, projection);
+            max = Math.max(max, projection);
         }
 
         return { max, min };
@@ -153,32 +153,30 @@ class OBB {
         var edges = edgesA.concat(edgesB);
 
         for (var i = 0; i < edges.length; i++) {
-            var separatingAxis = new Vector2(edges[i].y, -edges[i].x);
+            var edgeNormal = edges[i].normal();
             
             var minA = +Infinity;
             var maxA = -Infinity;
 
             for (var j = 0; j < edgesA.length; j++) {
-                var projection = edgesA[j].dot(separatingAxis);
-
-                minA = min(minA, projection);
-                maxA = max(maxA, projection);
+                var projection = edgeNormal.dot(edgesA[j]);
+                minA = Math.min(minA, projection);
+                maxA = Math.max(maxA, projection);
             }
 
             var minB = +Infinity;
             var maxB = -Infinity;
 
             for (var j = 0; j < edgesB.length; j++) {
-                var projection = edgesB[j].dot(separatingAxis);
-
-                minB = min(minB, projection);
-                maxB = max(maxB, projection);
+                var projection = edgeNormal.dot(edgesB[j]);
+                minB = Math.min(minB, projection);
+                maxB = Math.max(maxB, projection);
             }
 
-            if (maxA < minB || maxB < minA) {
-                apart = true;
-                break;
-            }
+            if (minB <= maxA || minA <= maxB) continue;
+                
+            apart = true;
+            break;
         }
 
         return apart;

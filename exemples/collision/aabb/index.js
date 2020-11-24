@@ -132,7 +132,9 @@ function mouseClicked () {
     pointsBuffer.push(mousePosition);
 }
 
-function setCloud () {
+function setCloud () {    
+    if (pointsBuffer.length < 3) return;
+
     clouds.push(pointsBuffer);
 
     var r = random(240);

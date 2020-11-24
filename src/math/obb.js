@@ -70,7 +70,6 @@ class OBB {
         otherEdges.push(new Vector2(otherPoints[0].x - otherPoints[3].x, otherPoints[0].y - otherPoints[3].y));
 
         var apart = this.getSeparatingAxis(edges, otherEdges);
-        console.log('apart:', apart);
         return !apart;
     }
 
@@ -149,7 +148,6 @@ class OBB {
     }
 
     getSeparatingAxis(edgesA, edgesB) {
-        var apart = false;
         var edges = edgesA.concat(edgesB);
 
         for (var i = 0; i < edges.length; i++) {
@@ -175,10 +173,9 @@ class OBB {
 
             if (minB <= maxA || minA <= maxB) continue;
                 
-            apart = true;
-            break;
+            return true;
         }
 
-        return apart;
+        return false;
     }
 }

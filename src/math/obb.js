@@ -60,7 +60,6 @@ class OBB {
         edges.push(new Vector2(points[3].x - points[2].x, points[3].y - points[2].y));
         edges.push(new Vector2(points[0].x - points[3].x, points[0].y - points[3].y));
 
-
         var otherPoints = other.getPoints();
 
         var otherEdges = [];
@@ -157,6 +156,7 @@ class OBB {
             var maxA = -Infinity;
 
             for (var j = 0; j < edgesA.length; j++) {
+                // SHOULD NOT PASS THE EDGESA, SHOULD BE POINTSA!!!
                 var projection = edgeNormal.dot(edgesA[j]);
                 minA = Math.min(minA, projection);
                 maxA = Math.max(maxA, projection);
@@ -166,6 +166,7 @@ class OBB {
             var maxB = -Infinity;
 
             for (var j = 0; j < edgesB.length; j++) {
+                // SHOULD NOT PASS THE EDGESB, SHOULD BE POINTSB!!!
                 var projection = edgeNormal.dot(edgesB[j]);
                 minB = Math.min(minB, projection);
                 maxB = Math.max(maxB, projection);

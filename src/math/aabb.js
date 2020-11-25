@@ -37,4 +37,14 @@ class AABB {
             && vector.y >= this.min.y
             && vector.y <= this.max.y; 
     }
+
+    getPoints() {
+        var points = [];
+        points.push(new Vector2(this.min.x, this.min.y));
+        points.push(new Vector2(this.max.x, this.min.y));
+        points.push(new Vector2(this.max.x, this.max.y));
+        points.push(new Vector2(this.min.x, this.max.y));
+        
+        return points;
+    }
 }

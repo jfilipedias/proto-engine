@@ -75,11 +75,7 @@ class OBB {
     }
 
     collidesAABB(aabb) {
-        var aabbPoints = [];
-        aabbPoints.push(new Vector2(aabb.min.x, aabb.min.y));
-        aabbPoints.push(new Vector2(aabb.max.x, aabb.min.y));
-        aabbPoints.push(new Vector2(aabb.max.x, aabb.max.y));
-        aabbPoints.push(new Vector2(aabb.min.x, aabb.max.y));
+        var aabbPoints = aabb.getPoints();
 
         var aabbEdges = [];
         aabbEdges.push(new Vector2(aabb.max.x - aabb.min.x, aabb.min.y));
@@ -129,19 +125,6 @@ class OBB {
         return !apart; 
     }
 
-    projectCloud(points, vector) {
-        var min = +Infinity;
-        var max = -Infinity;
-
-        for (var i = 0; i < points.length; i++) {
-            var projection = points[i].dot(vector);
-            min = Math.min(min, projection);
-            max = Math.max(max, projection);
-        }
-
-        return { max, min };
-    }
-
     getPoints() {
         var u = new Vector2(1, 0);
         u = this.matrix.transform(u);
@@ -183,5 +166,18 @@ class OBB {
         }
 
         return false;
+    }
+    
+    projectCloud(points, vector) {
+        var min = +Infinity;
+        var max = -Infinity;
+
+        for (var i = 0; i < points.length; i++) {
+            var projection = points[i].dot(vector);
+            min = Math.min(min, projection);
+            max = Math.max(max, projection);
+        }
+
+        return { max, min };
     }
 }

@@ -52,13 +52,13 @@ class OBB {
     }
 
     collides(other) {
-        var points = this.getPoints();
+        var thisPoints = this.getPoints();
 
-        var edges = [];       
-        edges.push(new Vector2(points[1].x - points[0].x, points[1].y - points[0].y));
-        edges.push(new Vector2(points[2].x - points[1].x, points[2].y - points[1].y));
-        edges.push(new Vector2(points[3].x - points[2].x, points[3].y - points[2].y));
-        edges.push(new Vector2(points[0].x - points[3].x, points[0].y - points[3].y));
+        var thisEdges = [];       
+        thisEdges.push(new Vector2(thisPoints[1].x - thisPoints[0].x, thisPoints[1].y - thisPoints[0].y));
+        thisEdges.push(new Vector2(thisPoints[2].x - thisPoints[1].x, thisPoints[2].y - thisPoints[1].y));
+        thisEdges.push(new Vector2(thisPoints[3].x - thisPoints[2].x, thisPoints[3].y - thisPoints[2].y));
+        thisEdges.push(new Vector2(thisPoints[0].x - thisPoints[3].x, thisPoints[0].y - thisPoints[3].y));
 
         var otherPoints = other.getPoints();
 
@@ -68,11 +68,19 @@ class OBB {
         otherEdges.push(new Vector2(otherPoints[3].x - otherPoints[2].x, otherPoints[3].y - otherPoints[2].y));
         otherEdges.push(new Vector2(otherPoints[0].x - otherPoints[3].x, otherPoints[0].y - otherPoints[3].y));
 
-        var apart = this.getSeparatingAxis(edges, otherEdges);
+        var edges = thisEdges.concat(otherEdges);
+
+        var apart = this.getSeparatingAxis(edges, thisPoints, otherPoints);
         return !apart;
     }
 
     collidesAABB(aabb) {
+        var aabbPoints = [];
+        aabbPoints.push(new Vector2(aabb.min.x, aabb.min.y));
+        aabbPoints.push(new Vector2(aabb.max.x, aabb.min.y));
+        aabbPoints.push(new Vector2(aabb.max.x, aabb.max.y));
+        aabbPoints.push(new Vector2(aabb.min.x, aabb.max.y));
+
         var aabbEdges = [];
         aabbEdges.push(new Vector2(aabb.max.x - aabb.min.x, aabb.min.y));
         aabbEdges.push(new Vector2(aabb.max.x, aabb.min.y - aabb.max.y));
@@ -87,7 +95,9 @@ class OBB {
         obbEdges.push(new Vector2(obbPoints[3].x - obbPoints[2].x, obbPoints[3].y - obbPoints[2].y));
         obbEdges.push(new Vector2(obbPoints[0].x - obbPoints[3].x, obbPoints[0].y - obbPoints[3].y));
 
-        var apart = this.getSeparatingAxis(aabbEdges, obbEdges);
+        var edges  = aabbEdges.concat(obbEdges);
+
+        var apart = this.getSeparatingAxis(edges, aabbPoints, obbPoints);
         return !apart;
     }
 
@@ -146,18 +156,15 @@ class OBB {
         return points;
     }
 
-    getSeparatingAxis(edgesA, edgesB) {
-        var edges = edgesA.concat(edgesB);
-
+    getSeparatingAxis(edges, pointsA, pointsB) {
         for (var i = 0; i < edges.length; i++) {
             var edgeNormal = edges[i].normal();
             
             var minA = +Infinity;
             var maxA = -Infinity;
 
-            for (var j = 0; j < edgesA.length; j++) {
-                // SHOULD NOT PASS THE EDGESA, SHOULD BE POINTSA!!!
-                var projection = edgeNormal.dot(edgesA[j]);
+            for (var j = 0; j < pointsA.length; j++) {
+                var projection = edgeNormal.dot(pointsA[j]);
                 minA = Math.min(minA, projection);
                 maxA = Math.max(maxA, projection);
             }
@@ -165,16 +172,14 @@ class OBB {
             var minB = +Infinity;
             var maxB = -Infinity;
 
-            for (var j = 0; j < edgesB.length; j++) {
-                // SHOULD NOT PASS THE EDGESB, SHOULD BE POINTSB!!!
-                var projection = edgeNormal.dot(edgesB[j]);
+            for (var j = 0; j < pointsB.length; j++) {
+                var projection = edgeNormal.dot(pointsB[j]);
                 minB = Math.min(minB, projection);
                 maxB = Math.max(maxB, projection);
             }
 
-            if (minB <= maxA || minA <= maxB) continue;
-                
-            return true;
+            if (maxA < minB || maxB < minA)
+                return true;
         }
 
         return false;
